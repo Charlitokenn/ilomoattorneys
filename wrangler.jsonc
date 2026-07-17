@@ -1,0 +1,15 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ilomoattorneys",
+  "compatibility_date": "2026-07-17",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+    // Belt-and-suspenders: make sure the Worker (and therefore the auth
+    // middleware) always runs for admin/API routes, even if a future
+    // build ever emits a static file under these paths.
+    "run_worker_first": ["/admin", "/admin/*", "/api/*"]
+  },
+  "observability": { "enabled": true }
+}

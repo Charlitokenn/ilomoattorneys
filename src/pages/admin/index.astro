@@ -3,6 +3,10 @@ import AdminLayout from "../../layouts/AdminLayout.astro"
 import { getAllArticles, deleteArticle, getArticleById } from "../../lib/db"
 import { formatDate } from "../../lib/utils"
 
+if (!Astro.locals.user) {
+  return Astro.redirect("/admin/login")
+}
+
 let notice = ""
 
 if (Astro.request.method === "POST") {

@@ -3,7 +3,7 @@ import { neon } from "@neondatabase/serverless"
 const connectionString =  (import.meta as any).env?.DATABASE_URL
 
 if (!connectionString) {
-  console.error("[v0] DATABASE_URL is not set")
+  console.error("DATABASE_URL is not set")
 }
 
 export const sql = neon(connectionString)

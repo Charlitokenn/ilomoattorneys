@@ -7,7 +7,10 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "deploy": "astro build && wrangler deploy",
+    "cf:preview": "astro build && wrangler dev",
+    "seed:admin": "node scripts/seed-admin.mjs"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.1.3",

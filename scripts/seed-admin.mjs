@@ -1,14 +1,9 @@
 import { neon } from "@neondatabase/serverless"
 import "dotenv/config"
 
-const URL = import.meta.env.NEON_DATABASE_URL
+const URL = import.meta.env.DATABASE_URL
 const EMAIL = import.meta.env.ADMIN_EMAIL
 const PASSWORD = import.meta.env.ADMIN_PASSWORD
-
-
-// const URL = "postgresql://neondb_owner:npg_w9cPYJDRjvG0@ep-polished-glitter-ad6ubwss-pooler.c-2.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
-// const EMAIL = "happyilomo1@gmail.com"
-// const PASSWORD = "ilomo-happy@2026"
 
 if (!URL) throw new Error("DATABASE_URL is required")
 if (!EMAIL) throw new Error("ADMIN_EMAIL is required")

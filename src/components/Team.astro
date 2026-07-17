@@ -1,9 +1,8 @@
 ---
+import {appConfig} from "../constants";
 const team = [
-  { name: "Alex Blackfire", role: "Co-Founder, CEO", img: "/images/team-1.png" },
-  { name: "Jacob Remmington", role: "Co-Founder, Creative Director", img: "/images/team-2.png" },
-  { name: "Miriam Richmond", role: "Financial Director", img: "/images/team-3.png" },
-  { name: "Leonardo Grant", role: "Marketing Director", img: "/images/team-4.png" },
+  { name: "Happy Ilomo", role: "Advocate", img: "/images/happy-ilomo.jpg" },
+  { name: "Joyce Basanda", role: "Advocate", img: "/images/joyce-basanda.jpg" },
 ]
 ---
 
@@ -14,7 +13,7 @@ const team = [
         Highly Qualified Team
       </p>
       <h2 class="font-heading text-3xl font-800 text-foreground text-balance sm:text-4xl">
-        Meet the people behind Seven Business
+        Meet the people behind {appConfig.name}
       </h2>
       <div class="mx-auto mt-6 h-1 w-14 rounded bg-accent"></div>
     </div>

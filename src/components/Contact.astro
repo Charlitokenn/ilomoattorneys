@@ -1,23 +1,24 @@
 ---
+import {appConfig} from "../constants";
 const details = [
   {
     title: "Address",
-    lines: ["Seven Business HQ", "218 Market Street, Suite 700", "San Francisco, CA 94103"],
+    lines: ["FM Hotel Building (1st Floor) Back Wing", "Chaugingi Street, Along Songea-Njombe Road", "P.O BOX 503, Njombe"],
     icon: "pin",
   },
   {
     title: "Business Hours",
-    lines: ["Mon – Fri: 9:00 – 18:00", "Saturday: 10:00 – 14:00", "Sunday: Closed"],
+    lines: ["Monday – Friday  08:00 am – 05:00 pm", "Saturday, Sunday and Public Holidays – Closed"],
     icon: "clock",
   },
   {
     title: "Phone",
-    lines: ["+1 (234) 567-891", "+1 (234) 567-892"],
+    lines: [ appConfig.mobile ],
     icon: "phone",
   },
   {
     title: "Email",
-    lines: ["hello@sevenbusiness.co", "support@sevenbusiness.co"],
+    lines: [appConfig.email],
     icon: "mail",
   },
 ]

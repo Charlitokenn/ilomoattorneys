@@ -1,13 +1,19 @@
 import { neon } from "@neondatabase/serverless"
+import "dotenv/config"
 
-const URL = "postgresql://neondb_owner:npg_w9cPYJDRjvG0@ep-polished-glitter-ad6ubwss-pooler.c-2.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
-const EMAIL = "nkonoki.charles@gmail.com"
-const PASSWORD = "Rare@5378"
+const URL = import.meta.env.NEON_DATABASE_URL
+const EMAIL = import.meta.env.ADMIN_EMAIL
+const PASSWORD = import.meta.env.ADMIN_PASSWORD
+
+
+// const URL = "postgresql://neondb_owner:npg_w9cPYJDRjvG0@ep-polished-glitter-ad6ubwss-pooler.c-2.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+// const EMAIL = "happyilomo1@gmail.com"
+// const PASSWORD = "ilomo-happy@2026"
 
 if (!URL) throw new Error("DATABASE_URL is required")
 if (!EMAIL) throw new Error("ADMIN_EMAIL is required")
 if (!PASSWORD || PASSWORD.length < 8) {
-    throw new Error("ADMIN_PASSWORD is required and should be at least 12 characters")
+    throw new Error("ADMIN_PASSWORD is required and should be at least 8 characters")
 }
 
 const sql = neon(URL)

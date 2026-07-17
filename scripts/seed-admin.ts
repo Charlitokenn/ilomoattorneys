@@ -1,5 +1,4 @@
 import { neon } from "@neondatabase/serverless"
-import "dotenv/config"
 
 const URL = import.meta.env.DATABASE_URL
 const EMAIL = import.meta.env.ADMIN_EMAIL

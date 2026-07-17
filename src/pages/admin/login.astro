@@ -1,31 +1,28 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro"
-import {
-  isAuthenticated,
-  verifyPassword,
-  createSession,
-  isPasswordConfigured,
-} from "../../lib/auth"
+import { getSessionUser, verifyCredentials, createSession } from "../../lib/auth"
+
 
 // Already signed in? Go to dashboard.
-if (isAuthenticated(Astro.cookies)) {
+if (await getSessionUser(Astro.cookies)) {
   return Astro.redirect("/admin")
 }
 
 let error = ""
-const configured = isPasswordConfigured()
 
 if (Astro.request.method === "POST") {
   const form = await Astro.request.formData()
+  const email = String(form.get("email") || "").trim()
   const password = String(form.get("password") || "")
-  if (!configured) {
-    error = "The ADMIN_PASSWORD environment variable is not set. Add it in project settings to enable login."
-  } else if (verifyPassword(password)) {
-    createSession(Astro.cookies)
+  const user = await verifyCredentials(email, password)
+
+  if (user) {
+    await createSession(Astro.cookies, user.id)
     return Astro.redirect("/admin")
   } else {
     error = "Incorrect password. Please try again."
   }
+  error = "Incorrect email or password. Please try again."
 }
 ---
 
@@ -51,6 +48,20 @@ if (Astro.request.method === "POST") {
 
         <form method="POST" class="mt-6 space-y-4">
           <div>
+            <label for="email" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
+              Email
+            </label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                autofocus
+                autocomplete="username"
+                class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
+            />
+          </div>
+          <div>
             <label for="password" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
               Password
             </label>
@@ -59,7 +70,6 @@ if (Astro.request.method === "POST") {
               id="password"
               name="password"
               required
-              autofocus
               autocomplete="current-password"
               class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
             />

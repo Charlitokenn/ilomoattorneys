@@ -6,7 +6,9 @@ import cloudflare from '@astrojs/cloudflare';
 export default defineConfig({
   output: "server",
   adapter: cloudflare({
-    mode: 'advanced',
+    // You don't use <Image> transforms, so skip provisioning the
+    // Cloudflare Images binding entirely.
+    imageService: "passthrough",
   }),
   vite: {
     plugins: [tailwindcss()],

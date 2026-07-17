@@ -1,61 +1,91 @@
-import crypto from "node:crypto"
 import type { AstroCookies } from "astro"
+import { sql } from "./db"
 
 const COOKIE_NAME = "admin_session"
+const SESSION_DAYS = 7
 
-function getPassword(): string {
-  return (
-    (import.meta as any).env?.ADMIN_PASSWORD
-  )
+export interface AuthUser {
+  id: number
+  email: string
 }
 
-function getSecret(): string {
-  return (
-    (import.meta as any).env?.SESSION_SECRET || "insecure-dev-secret"
-  )
+/** 256 bits of randomness from the Web Crypto API — native on Cloudflare
+ *  Workers, no node:crypto / nodejs_compat flag required. */
+function generateToken(): string {
+  const bytes = new Uint8Array(32)
+  crypto.getRandomValues(bytes)
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("")
 }
 
-/** Deterministic session token derived from the secret. */
-function expectedToken(): string {
-  return crypto
-    .createHmac("sha256", getSecret())
-    .update("admin-authenticated")
-    .digest("hex")
+/** Only a SHA-256 hash of the token is ever stored/compared — a DB leak
+ *  alone can't be used to log in. */
+async function hashToken(token: string): Promise<string> {
+  const data = new TextEncoder().encode(token)
+  const digest = await crypto.subtle.digest("SHA-256", data)
+  return Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("")
 }
 
-export function isPasswordConfigured(): boolean {
-  return getPassword().length > 0
+/** Verifies email + password. Hashing/verification happens inside Postgres
+ *  via pgcrypto's crypt(), so no bcrypt library is needed in the Worker. */
+export async function verifyCredentials(email: string, password: string): Promise<AuthUser | null> {
+  if (!email || !password) return null
+  const rows = (await sql`
+    SELECT id, email FROM users
+    WHERE email = ${email.toLowerCase().trim()}
+      AND password_hash = crypt(${password}, password_hash)
+    LIMIT 1
+  `) as AuthUser[]
+  return rows[0] ?? null
 }
 
-export function verifyPassword(candidate: string): boolean {
-  const expected = getPassword()
-  if (!expected) return false
-  const a = Buffer.from(candidate)
-  const b = Buffer.from(expected)
-  if (a.length !== b.length) return false
-  return crypto.timingSafeEqual(a, b)
-}
+/** Creates a server-side session record and sets the session cookie. */
+export async function createSession(cookies: AstroCookies, userId: number): Promise<void> {
+  const token = generateToken()
+  const tokenHash = await hashToken(token)
+  const expiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000)
 
-export function createSession(cookies: AstroCookies): void {
-  cookies.set(COOKIE_NAME, expectedToken(), {
+  await sql`
+    INSERT INTO sessions (user_id, token_hash, expires_at)
+    VALUES (${userId}, ${tokenHash}, ${expiresAt.toISOString()})
+  `
+
+  cookies.set(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure: true,
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: SESSION_DAYS * 24 * 60 * 60,
   })
 }
 
-export function destroySession(cookies: AstroCookies): void {
-  cookies.delete(COOKIE_NAME, { path: "/" })
+/** Returns the authenticated user for this request, or null. An expired/
+ *  revoked session clears the stale cookie. */
+export async function getSessionUser(cookies: AstroCookies): Promise<AuthUser | null> {
+  const token = cookies.get(COOKIE_NAME)?.value
+  if (!token) return null
+
+  const tokenHash = await hashToken(token)
+  const rows = (await sql`
+    SELECT u.id, u.email FROM sessions s
+    JOIN users u ON u.id = s.user_id
+    WHERE s.token_hash = ${tokenHash} AND s.expires_at > now()
+    LIMIT 1
+  `) as AuthUser[]
+
+  if (!rows[0]) {
+    cookies.delete(COOKIE_NAME, { path: "/" })
+    return null
+  }
+  return rows[0]
 }
 
-export function isAuthenticated(cookies: AstroCookies): boolean {
+/** Revokes the session in the database, not just the cookie — a stolen
+ *  cookie can't keep working after logout. */
+export async function destroySession(cookies: AstroCookies): Promise<void> {
   const token = cookies.get(COOKIE_NAME)?.value
-  if (!token) return false
-  const expected = expectedToken()
-  const a = Buffer.from(token)
-  const b = Buffer.from(expected)
-  if (a.length !== b.length) return false
-  return crypto.timingSafeEqual(a, b)
+  if (token) {
+    const tokenHash = await hashToken(token)
+    await sql`DELETE FROM sessions WHERE token_hash = ${tokenHash}`
+  }
+  cookies.delete(COOKIE_NAME, { path: "/" })
 }

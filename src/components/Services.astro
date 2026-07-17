@@ -1,0 +1,82 @@
+---
+const services = [
+  {
+    title: "Strategy Consulting",
+    text: "We turn complex challenges into clear, actionable roadmaps that align your team around measurable goals.",
+    icon: "chart",
+  },
+  {
+    title: "Market Research",
+    text: "Data-driven insight into your customers, competitors and category so every decision is grounded in evidence.",
+    icon: "search",
+  },
+  {
+    title: "Financial Planning",
+    text: "Forecasting, modelling and capital strategy that keep your growth sustainable and investors confident.",
+    icon: "coins",
+  },
+  {
+    title: "Brand & Growth",
+    text: "Positioning, messaging and go-to-market execution that helps your brand stand out and scale faster.",
+    icon: "rocket",
+  },
+]
+---
+
+<section id="services" class="bg-white py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal mx-auto mb-16 max-w-2xl text-center">
+      <p class="mb-3 font-heading text-sm font-700 uppercase tracking-[0.3em] text-accent">
+        What We Do
+      </p>
+      <h2 class="font-heading text-3xl font-800 text-foreground text-balance sm:text-4xl">
+        Services built to grow your business
+      </h2>
+      <div class="mx-auto mt-6 h-1 w-14 rounded bg-accent"></div>
+    </div>
+
+    <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        services.map((s, i) => (
+          <article
+            class="reveal group rounded-lg border border-border bg-white p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-accent/40 hover:shadow-xl"
+            data-delay={i}
+          >
+            <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-accent transition-colors duration-300 group-hover:bg-accent group-hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                {s.icon === "chart" && (
+                  <>
+                    <path d="M3 3v18h18" />
+                    <path d="M7 15l3-4 4 3 5-7" />
+                  </>
+                )}
+                {s.icon === "search" && (
+                  <>
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m21 21-4.3-4.3" />
+                  </>
+                )}
+                {s.icon === "coins" && (
+                  <>
+                    <circle cx="9" cy="9" r="6" />
+                    <path d="M14.5 4.2a6 6 0 0 1 0 11.6" />
+                    <path d="M9 6v6l3 1.5" />
+                  </>
+                )}
+                {s.icon === "rocket" && (
+                  <>
+                    <path d="M5 15c-1.5 1.5-2 5-2 5s3.5-.5 5-2" />
+                    <path d="M9 12a12 12 0 0 1 8-8c2 0 3 1 3 3a12 12 0 0 1-8 8l-3-3z" />
+                    <circle cx="14.5" cy="9.5" r="1.5" />
+                  </>
+                )}
+              </svg>
+            </div>
+            <h3 class="mb-3 font-heading text-lg font-700 text-foreground">{s.title}</h3>
+            <p class="text-sm leading-relaxed text-muted-foreground">{s.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>

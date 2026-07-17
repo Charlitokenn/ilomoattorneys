@@ -1,0 +1,109 @@
+---
+const links = [
+  { label: "Home", href: "#home" },
+  { label: "Services", href: "#services" },
+  { label: "Company", href: "#company" },
+  { label: "Our Benefits", href: "#benefits" },
+  { label: "Free Consultation", href: "#consultation" },
+  { label: "Our Team", href: "#team" },
+  { label: "Contact", href: "#contact" },
+]
+
+const pageLinks = [{ label: "Blog", href: "/blog" }]
+---
+
+<header
+  id="site-nav"
+  class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+>
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-5 transition-all duration-300 nav-inner">
+    <!-- Logo -->
+    <a href="#home" class="flex items-center gap-2" aria-label="Seven Business home">
+      <span class="flex h-9 w-9 items-center justify-center rounded-md bg-accent font-heading text-lg font-extrabold text-white">7</span>
+      <span class="nav-logo font-heading text-xl font-extrabold tracking-tight text-white transition-colors">
+        Seven<span class="text-accent">Business</span>
+      </span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden items-center gap-8 lg:flex" aria-label="Primary">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            data-nav
+            class="nav-link nav-item font-heading text-[13px] font-600 uppercase tracking-wide text-white/90 transition-colors hover:text-white"
+          >
+            {l.label}
+          </a>
+        ))
+      }
+      {
+        pageLinks.map((l) => (
+          <a
+            href={l.href}
+            class="nav-link nav-item font-heading text-[13px] font-600 uppercase tracking-wide text-white/90 transition-colors hover:text-white"
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <!-- Mobile toggle -->
+    <button
+      id="menu-toggle"
+      class="nav-item inline-flex flex-col gap-1.5 p-2 text-white lg:hidden"
+      aria-label="Toggle menu"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+    >
+      <span class="block h-0.5 w-6 bg-current"></span>
+      <span class="block h-0.5 w-6 bg-current"></span>
+      <span class="block h-0.5 w-6 bg-current"></span>
+    </button>
+  </div>
+
+  <!-- Mobile menu -->
+  <nav
+    id="mobile-menu"
+    class="hidden border-t border-border bg-white lg:hidden"
+    aria-label="Mobile"
+  >
+    <ul class="flex flex-col px-6 py-4">
+      {
+        [...links, ...pageLinks].map((l) => (
+          <li>
+            <a
+              href={l.href}
+              class="block border-b border-border py-3 font-heading text-sm font-600 uppercase tracking-wide text-foreground transition-colors hover:text-accent"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  /* Transparent over hero, solid white after scrolling */
+  #site-nav.is-scrolled {
+    background-color: #ffffff;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  }
+  #site-nav.is-scrolled .nav-inner {
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+  }
+  #site-nav.is-scrolled .nav-logo {
+    color: var(--color-foreground);
+  }
+  #site-nav.is-scrolled .nav-item {
+    color: var(--color-foreground);
+  }
+  #site-nav.is-scrolled .nav-item:hover {
+    color: var(--color-accent);
+  }
+</style>

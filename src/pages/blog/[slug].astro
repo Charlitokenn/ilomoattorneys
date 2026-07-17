@@ -1,0 +1,182 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro"
+import SiteHeader from "../../components/SiteHeader.astro"
+import SiteFooter from "../../components/SiteFooter.astro"
+import { getArticleBySlug, getRelatedArticles } from "../../lib/db"
+import { sanitizeArticleHtml, formatDate } from "../../lib/utils"
+
+const { slug } = Astro.params
+const article = slug ? await getArticleBySlug(slug) : null
+
+if (!article || article.status !== "published") {
+  return new Response(null, { status: 404, statusText: "Not Found" })
+}
+
+const related = await getRelatedArticles(article.category, article.id)
+const safeContent = sanitizeArticleHtml(article.content)
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, "") || Astro.url.origin
+const pageUrl = new URL(Astro.url.pathname, siteUrl).toString()
+const ogImage = article.og_image || article.cover_image
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: article.title,
+  description: article.meta_description || article.excerpt,
+  image: ogImage.startsWith("http") ? ogImage : siteUrl + ogImage,
+  datePublished: article.published_at,
+  dateModified: article.updated_at,
+  author: { "@type": "Person", name: article.author },
+  publisher: {
+    "@type": "Organization",
+    name: "Seven Business",
+    logo: { "@type": "ImageObject", url: siteUrl + "/favicon.svg" },
+  },
+  mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },
+  keywords: article.meta_keywords,
+}
+---
+
+<BlogLayout
+  title={article.meta_title || article.title}
+  description={article.meta_description || article.excerpt}
+  keywords={article.meta_keywords}
+  canonical={article.canonical_url || undefined}
+  ogImage={ogImage}
+  ogType="article"
+  publishedTime={article.published_at}
+  author={article.author}
+  jsonLd={jsonLd}
+>
+  <SiteHeader current="/blog" />
+
+  <main>
+    <!-- Hero -->
+    <header class="relative overflow-hidden bg-dark">
+      <div class="absolute inset-0 opacity-25">
+        <img src={article.cover_image || "/images/hero.png"} alt="" class="h-full w-full object-cover" aria-hidden="true" />
+      </div>
+      <div class="absolute inset-0 bg-gradient-to-t from-dark via-dark/80 to-dark/60"></div>
+      <div class="relative mx-auto max-w-3xl px-6 pb-16 pt-20 text-center">
+        <a href={`/blog?category=${encodeURIComponent(article.category)}`} class="inline-block rounded-full bg-accent px-4 py-1.5 font-heading text-[11px] font-700 uppercase tracking-wide text-white">
+          {article.category}
+        </a>
+        <h1 class="mt-6 text-balance font-heading text-3xl font-800 leading-tight text-white sm:text-4xl lg:text-5xl">
+          {article.title}
+        </h1>
+        <div class="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-white/70">
+          <span>By {article.author}</span>
+          <span aria-hidden="true">·</span>
+          <span>{formatDate(article.published_at)}</span>
+          <span aria-hidden="true">·</span>
+          <span>{article.reading_minutes} min read</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <article class="mx-auto max-w-3xl px-6 py-14">
+      <p class="mb-10 text-balance text-lg font-500 leading-relaxed text-foreground">
+        {article.excerpt}
+      </p>
+      <div class="article-body" set:html={safeContent} />
+
+      <!-- Share / keywords -->
+      {article.meta_keywords && (
+        <div class="mt-12 flex flex-wrap gap-2 border-t border-border pt-8">
+          {article.meta_keywords.split(",").map((k) => (
+            <span class="rounded-full bg-muted px-3 py-1 text-xs font-500 text-muted-foreground">
+              {k.trim()}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div class="mt-10">
+        <a href="/blog" class="inline-flex items-center gap-2 font-heading text-sm font-700 uppercase tracking-wide text-accent transition-colors hover:text-accent-hover">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+          Back to Blog
+        </a>
+      </div>
+    </article>
+
+    <!-- Related -->
+    {related.length > 0 && (
+      <section class="border-t border-border bg-muted py-16">
+        <div class="mx-auto max-w-7xl px-6">
+          <h2 class="mb-10 text-center font-heading text-2xl font-800 text-foreground">Related Articles</h2>
+          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {
+              related.map((a) => (
+                <a href={`/blog/${a.slug}`} class="group flex flex-col overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-shadow hover:shadow-xl">
+                  <div class="relative aspect-[16/10] overflow-hidden">
+                    <img src={a.cover_image || "/images/hero.png"} alt={a.title} class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                  </div>
+                  <div class="flex flex-1 flex-col p-6">
+                    <p class="font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">{formatDate(a.published_at)}</p>
+                    <h3 class="mt-2 text-balance font-heading text-lg font-700 leading-snug text-foreground transition-colors group-hover:text-accent">{a.title}</h3>
+                  </div>
+                </a>
+              ))
+            }
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+
+  <SiteFooter />
+</BlogLayout>
+
+<style>
+  .article-body {
+    color: var(--color-foreground);
+    line-height: 1.75;
+  }
+  .article-body :global(h2) {
+    font-family: var(--font-heading);
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 2.25rem 0 1rem;
+    line-height: 1.25;
+  }
+  .article-body :global(h3) {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 1.75rem 0 0.75rem;
+  }
+  .article-body :global(p) {
+    margin: 0 0 1.25rem;
+  }
+  .article-body :global(ul),
+  .article-body :global(ol) {
+    margin: 0 0 1.25rem 1.25rem;
+  }
+  .article-body :global(ul) { list-style: disc; }
+  .article-body :global(ol) { list-style: decimal; }
+  .article-body :global(li) { margin-bottom: 0.5rem; }
+  .article-body :global(a) {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .article-body :global(blockquote) {
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: var(--color-muted-foreground);
+  }
+  .article-body :global(img) {
+    border-radius: 0.5rem;
+    margin: 1.5rem 0;
+  }
+  .article-body :global(figcaption) {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--color-muted-foreground);
+    margin-top: -1rem;
+  }
+</style>

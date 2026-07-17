@@ -1,0 +1,271 @@
+---
+import type { Article } from "../lib/db"
+
+interface Props {
+  article?: Article | null
+  action: string
+  categories: string[]
+  error?: string
+}
+const { article = null, action, categories, error = "" } = Astro.props
+
+const cats =
+  categories.length > 0
+    ? categories
+    : ["Strategy", "Finance", "Leadership", "Technology", "Business"]
+
+const v = {
+  title: article?.title ?? "",
+  slug: article?.slug ?? "",
+  excerpt: article?.excerpt ?? "",
+  content: article?.content ?? "",
+  cover_image: article?.cover_image ?? "",
+  category: article?.category ?? cats[0],
+  author: article?.author ?? "Admin",
+  status: article?.status ?? "draft",
+  meta_title: article?.meta_title ?? "",
+  meta_description: article?.meta_description ?? "",
+  meta_keywords: article?.meta_keywords ?? "",
+  og_image: article?.og_image ?? "",
+  canonical_url: article?.canonical_url ?? "",
+}
+---
+
+<form method="POST" action={action} id="editor-form" class="grid gap-8 lg:grid-cols-[1fr_320px]">
+  {error && (
+    <p class="rounded-md border border-accent/30 bg-accent/10 px-4 py-3 text-sm text-accent lg:col-span-2">
+      {error}
+    </p>
+  )}
+
+  <!-- Main column -->
+  <div class="space-y-6">
+    <div class="rounded-xl border border-border bg-background p-6">
+      <label for="title" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Title</label>
+      <input
+        type="text" id="title" name="title" required value={v.title}
+        placeholder="An attention-grabbing headline"
+        class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-base font-600 text-foreground outline-none transition-colors focus:border-accent"
+      />
+
+      <div class="mt-4">
+        <label for="slug" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
+          URL Slug
+        </label>
+        <div class="flex items-center gap-2">
+          <span class="whitespace-nowrap text-sm text-muted-foreground">/blog/</span>
+          <input
+            type="text" id="slug" name="slug" required value={v.slug}
+            placeholder="url-friendly-slug"
+            class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
+          />
+        </div>
+        <p class="mt-1 text-xs text-muted-foreground">Auto-generated from the title. Edit if needed.</p>
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-border bg-background p-6">
+      <label for="excerpt" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
+        Excerpt / Summary
+      </label>
+      <textarea
+        id="excerpt" name="excerpt" rows="3"
+        placeholder="A short summary shown on the blog listing and in search results."
+        class="w-full resize-y rounded-md border border-border bg-background px-3 py-2.5 text-sm leading-relaxed text-foreground outline-none transition-colors focus:border-accent"
+      >{v.excerpt}</textarea>
+    </div>
+
+    <div class="rounded-xl border border-border bg-background p-6">
+      <span class="mb-2 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Content</span>
+      <div id="editor-host" class="quill-host"></div>
+      <textarea name="content" id="content-input" class="hidden">{v.content}</textarea>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <aside class="space-y-6">
+    <div class="rounded-xl border border-border bg-background p-6">
+      <h2 class="mb-4 font-heading text-sm font-800 uppercase tracking-wide text-foreground">Publish</h2>
+      <label for="status" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Status</label>
+      <select id="status" name="status" class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent">
+        <option value="draft" selected={v.status === "draft"}>Draft</option>
+        <option value="published" selected={v.status === "published"}>Published</option>
+      </select>
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <div>
+          <label for="category" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Category</label>
+          <input list="cat-list" id="category" name="category" value={v.category}
+            class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+          <datalist id="cat-list">
+            {cats.map((c) => <option value={c}></option>)}
+          </datalist>
+        </div>
+        <div>
+          <label for="author" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Author</label>
+          <input type="text" id="author" name="author" value={v.author}
+            class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+        </div>
+      </div>
+
+      <div class="mt-5 flex gap-3">
+        <button type="submit" class="flex-1 rounded-md bg-accent px-4 py-2.5 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover">
+          Save
+        </button>
+        <a href="/admin" class="rounded-md border border-border px-4 py-2.5 font-heading text-sm font-600 uppercase tracking-wide text-foreground transition-colors hover:border-accent hover:text-accent">
+          Cancel
+        </a>
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-border bg-background p-6">
+      <h2 class="mb-1 font-heading text-sm font-800 uppercase tracking-wide text-foreground">Featured Image</h2>
+      <p class="mb-3 text-xs text-muted-foreground">Image URL used as the cover.</p>
+      <input type="text" id="cover_image" name="cover_image" value={v.cover_image}
+        placeholder="/images/hero.png or https://…"
+        class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+      <div class="mt-3 overflow-hidden rounded-md border border-border bg-muted">
+        <img id="cover-preview" src={v.cover_image || "/images/hero.png"} alt="Cover preview" class="aspect-[16/9] w-full object-cover" />
+      </div>
+    </div>
+
+    <div class="rounded-xl border border-border bg-background p-6">
+      <h2 class="font-heading text-sm font-800 uppercase tracking-wide text-foreground">SEO Settings</h2>
+      <p class="mb-4 mt-1 text-xs text-muted-foreground">Optimize how this article appears in search and social.</p>
+
+      <div class="space-y-4">
+        <div>
+          <label for="meta_title" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Meta Title</label>
+          <input type="text" id="meta_title" name="meta_title" value={v.meta_title} maxlength="70"
+            placeholder="Defaults to the article title"
+            class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+          <p class="mt-1 text-[11px] text-muted-foreground"><span id="mt-count">0</span>/60 recommended</p>
+        </div>
+        <div>
+          <label for="meta_description" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Meta Description</label>
+          <textarea id="meta_description" name="meta_description" rows="3" maxlength="180"
+            placeholder="Defaults to the excerpt"
+            class="w-full resize-y rounded-md border border-border bg-background px-3 py-2 text-sm leading-relaxed text-foreground outline-none transition-colors focus:border-accent">{v.meta_description}</textarea>
+          <p class="mt-1 text-[11px] text-muted-foreground"><span id="md-count">0</span>/160 recommended</p>
+        </div>
+        <div>
+          <label for="meta_keywords" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Keywords</label>
+          <input type="text" id="meta_keywords" name="meta_keywords" value={v.meta_keywords}
+            placeholder="comma, separated, keywords"
+            class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+        </div>
+        <div>
+          <label for="og_image" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Social Share Image</label>
+          <input type="text" id="og_image" name="og_image" value={v.og_image}
+            placeholder="Defaults to featured image"
+            class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+        </div>
+        <div>
+          <label for="canonical_url" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">Canonical URL</label>
+          <input type="url" id="canonical_url" name="canonical_url" value={v.canonical_url}
+            placeholder="Leave blank to use this page's URL"
+            class="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+        </div>
+      </div>
+    </div>
+  </aside>
+</form>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" />
+
+<script>
+  import Quill from "quill"
+
+  const host = document.getElementById("editor-host")
+  const hidden = document.getElementById("content-input") as HTMLTextAreaElement | null
+  const form = document.getElementById("editor-form") as HTMLFormElement | null
+
+  if (host && hidden && form) {
+    const quill = new Quill(host, {
+      theme: "snow",
+      placeholder: "Write your article…",
+      modules: {
+        toolbar: [
+          [{ header: [2, 3, 4, false] }],
+          ["bold", "italic", "underline", "strike"],
+          ["blockquote", "link"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          ["clean"],
+        ],
+      },
+    })
+
+    // Seed existing content
+    if (hidden.value.trim()) {
+      quill.clipboard.dangerouslyPasteHTML(hidden.value)
+    }
+
+    form.addEventListener("submit", () => {
+      const html = quill.root.innerHTML
+      hidden.value = html === "<p><br></p>" ? "" : html
+    })
+  }
+
+  // Slug auto-generation
+  const titleEl = document.getElementById("title") as HTMLInputElement | null
+  const slugEl = document.getElementById("slug") as HTMLInputElement | null
+  let slugEdited = Boolean(slugEl && slugEl.value)
+  const slugify = (s: string) =>
+    s.toLowerCase().trim().replace(/['"]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 80)
+  slugEl?.addEventListener("input", () => { slugEdited = true })
+  titleEl?.addEventListener("input", () => {
+    if (!slugEdited && slugEl) slugEl.value = slugify(titleEl.value)
+  })
+
+  // Cover preview
+  const coverEl = document.getElementById("cover_image") as HTMLInputElement | null
+  const preview = document.getElementById("cover-preview") as HTMLImageElement | null
+  coverEl?.addEventListener("input", () => {
+    if (preview) preview.src = coverEl.value || "/images/hero.png"
+  })
+
+  // SEO character counters
+  const bind = (id: string, countId: string) => {
+    const el = document.getElementById(id) as HTMLInputElement | HTMLTextAreaElement | null
+    const out = document.getElementById(countId)
+    if (!el || !out) return
+    const upd = () => (out.textContent = String(el.value.length))
+    el.addEventListener("input", upd)
+    upd()
+  }
+  bind("meta_title", "mt-count")
+  bind("meta_description", "md-count")
+</script>
+
+<style is:global>
+  .quill-host {
+    min-height: 320px;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+  }
+  .ql-toolbar.ql-snow,
+  .ql-container.ql-snow {
+    border-color: var(--color-border);
+  }
+  .ql-toolbar.ql-snow {
+    border-top-left-radius: 0.375rem;
+    border-top-right-radius: 0.375rem;
+  }
+  .ql-container.ql-snow {
+    border-bottom-left-radius: 0.375rem;
+    border-bottom-right-radius: 0.375rem;
+  }
+  .ql-editor {
+    min-height: 320px;
+  }
+  .ql-snow .ql-stroke { stroke: var(--color-foreground); }
+  .ql-snow .ql-fill { fill: var(--color-foreground); }
+  .ql-snow.ql-toolbar button:hover .ql-stroke,
+  .ql-snow.ql-toolbar button.ql-active .ql-stroke {
+    stroke: var(--color-accent);
+  }
+  .ql-snow.ql-toolbar button:hover .ql-fill,
+  .ql-snow.ql-toolbar button.ql-active .ql-fill {
+    fill: var(--color-accent);
+  }
+</style>

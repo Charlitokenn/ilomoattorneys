@@ -1,0 +1,81 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro"
+import {
+  isAuthenticated,
+  verifyPassword,
+  createSession,
+  isPasswordConfigured,
+} from "../../lib/auth"
+
+// Already signed in? Go to dashboard.
+if (isAuthenticated(Astro.cookies)) {
+  return Astro.redirect("/admin")
+}
+
+let error = ""
+const configured = isPasswordConfigured()
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData()
+  const password = String(form.get("password") || "")
+  if (!configured) {
+    error = "The ADMIN_PASSWORD environment variable is not set. Add it in project settings to enable login."
+  } else if (verifyPassword(password)) {
+    createSession(Astro.cookies)
+    return Astro.redirect("/admin")
+  } else {
+    error = "Incorrect password. Please try again."
+  }
+}
+---
+
+<AdminLayout title="Sign in" showChrome={false}>
+  <main class="flex min-h-screen items-center justify-center px-6 py-16">
+    <div class="w-full max-w-sm">
+      <div class="mb-8 text-center">
+        <a href="/" class="inline-flex items-center gap-2" aria-label="Seven Business home">
+          <span class="flex h-10 w-10 items-center justify-center rounded-md bg-accent font-heading text-lg font-extrabold text-white">7</span>
+          <span class="font-heading text-xl font-800 text-foreground">Blog Admin</span>
+        </a>
+      </div>
+
+      <div class="rounded-xl border border-border bg-background p-8 shadow-sm">
+        <h1 class="font-heading text-lg font-800 text-foreground">Sign in</h1>
+        <p class="mt-1 text-sm text-muted-foreground">Enter your password to manage blog posts.</p>
+
+        {error && (
+          <p class="mt-5 rounded-md border border-accent/30 bg-accent/10 px-3 py-2.5 text-sm text-accent">
+            {error}
+          </p>
+        )}
+
+        <form method="POST" class="mt-6 space-y-4">
+          <div>
+            <label for="password" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
+              Password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autofocus
+              autocomplete="current-password"
+              class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
+            />
+          </div>
+          <button
+            type="submit"
+            class="w-full rounded-md bg-accent px-4 py-2.5 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover"
+          >
+            Sign in
+          </button>
+        </form>
+      </div>
+
+      <p class="mt-6 text-center text-xs text-muted-foreground">
+        <a href="/" class="transition-colors hover:text-accent">← Back to website</a>
+      </p>
+    </div>
+  </main>
+</AdminLayout>

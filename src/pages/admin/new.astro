@@ -1,0 +1,55 @@
+---
+import AdminLayout from "../../layouts/AdminLayout.astro"
+import EditorForm from "../../components/EditorForm.astro"
+import { createArticle, slugExists, getPublishedCategories, type ArticleInput } from "../../lib/db"
+import { slugify, estimateReadingMinutes, excerptFromHtml } from "../../lib/utils"
+
+let error = ""
+const categories = await getPublishedCategories()
+
+if (Astro.request.method === "POST") {
+  const form = await Astro.request.formData()
+  const title = String(form.get("title") || "").trim()
+  const content = String(form.get("content") || "")
+  let slug = slugify(String(form.get("slug") || "") || title)
+
+  if (!title) {
+    error = "A title is required."
+  } else if (!slug) {
+    error = "A valid URL slug is required."
+  } else if (await slugExists(slug)) {
+    error = `The slug "${slug}" is already in use. Please choose another.`
+  } else {
+    const excerpt =
+      String(form.get("excerpt") || "").trim() || excerptFromHtml(content)
+    const data: ArticleInput = {
+      title,
+      slug,
+      excerpt,
+      content,
+      cover_image: String(form.get("cover_image") || "").trim(),
+      category: String(form.get("category") || "Business").trim() || "Business",
+      author: String(form.get("author") || "Admin").trim() || "Admin",
+      status: form.get("status") === "published" ? "published" : "draft",
+      meta_title: String(form.get("meta_title") || "").trim(),
+      meta_description: String(form.get("meta_description") || "").trim(),
+      meta_keywords: String(form.get("meta_keywords") || "").trim(),
+      og_image: String(form.get("og_image") || "").trim(),
+      canonical_url: String(form.get("canonical_url") || "").trim(),
+      reading_minutes: estimateReadingMinutes(content),
+    }
+    const created = await createArticle(data)
+    return Astro.redirect(`/admin?created=${encodeURIComponent(created.title)}`)
+  }
+}
+---
+
+<AdminLayout title="New article">
+  <main class="mx-auto max-w-5xl px-6 py-10">
+    <div class="mb-8 flex items-center gap-3">
+      <a href="/admin" class="text-sm text-muted-foreground transition-colors hover:text-accent">← Back</a>
+    </div>
+    <h1 class="mb-8 font-heading text-2xl font-800 text-foreground">New Article</h1>
+    <EditorForm action="/admin/new" categories={categories} error={error} />
+  </main>
+</AdminLayout>

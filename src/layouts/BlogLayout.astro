@@ -1,0 +1,114 @@
+---
+import "../styles/global.css"
+
+interface Props {
+  title: string
+  description: string
+  keywords?: string
+  canonical?: string
+  ogImage?: string
+  ogType?: "website" | "article"
+  publishedTime?: string | null
+  author?: string
+  jsonLd?: Record<string, unknown>
+  noindex?: boolean
+}
+
+const {
+  title,
+  description,
+  keywords,
+  canonical,
+  ogImage,
+  ogType = "website",
+  publishedTime,
+  author,
+  jsonLd,
+  noindex = false,
+} = Astro.props
+
+const siteUrl = Astro.site?.toString().replace(/\/$/, "") || Astro.url.origin
+const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).toString()
+const resolvedOg = ogImage
+  ? ogImage.startsWith("http")
+    ? ogImage
+    : siteUrl + ogImage
+  : siteUrl + "/images/hero.png"
+---
+
+<!doctype html>
+<html lang="en" class="bg-background">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Primary SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {keywords && <meta name="keywords" content={keywords} />}
+    {author && <meta name="author" content={author} />}
+    <link rel="canonical" href={canonicalUrl} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {!noindex && <meta name="robots" content="index, follow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={resolvedOg} />
+    <meta property="og:site_name" content="Seven Business" />
+    {ogType === "article" && publishedTime && (
+      <meta property="article:published_time" content={publishedTime} />
+    )}
+    {ogType === "article" && author && (
+      <meta property="article:author" content={author} />
+    )}
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOg} />
+
+    {jsonLd && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    )}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+
+    <script is:inline>
+      const initReveal = () => {
+        const els = document.querySelectorAll(".reveal")
+        if (!("IntersectionObserver" in window)) {
+          els.forEach((e) => e.classList.add("is-visible"))
+          return
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible")
+                io.unobserve(entry.target)
+              }
+            })
+          },
+          { threshold: 0.12, rootMargin: "0px 0px -50px 0px" }
+        )
+        els.forEach((el) => io.observe(el))
+      }
+      if (document.readyState !== "loading") initReveal()
+      else document.addEventListener("DOMContentLoaded", initReveal)
+    </script>
+  </body>
+</html>

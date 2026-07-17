@@ -1,0 +1,57 @@
+---
+const values = [
+  {
+    n: "01.",
+    title: "Quality",
+    text: "We hold every deliverable to an uncompromising standard, because your reputation rides on ours.",
+  },
+  {
+    n: "02.",
+    title: "Integrity",
+    text: "Honest advice, transparent pricing and clear communication at every stage of the engagement.",
+  },
+  {
+    n: "03.",
+    title: "Innovation",
+    text: "We challenge conventional thinking and bring fresh, evidence-based ideas to every problem.",
+  },
+  {
+    n: "04.",
+    title: "Reliability",
+    text: "Deadlines met, promises kept. You can count on us to deliver, on time and on budget.",
+  },
+]
+---
+
+<section id="benefits" class="bg-white py-24">
+  <div class="mx-auto max-w-7xl px-6">
+    <div class="reveal mx-auto mb-16 max-w-2xl text-center">
+      <p class="mb-3 font-heading text-sm font-700 uppercase tracking-[0.3em] text-accent">
+        Our Benefits
+      </p>
+      <h2 class="font-heading text-3xl font-800 text-foreground text-balance sm:text-4xl">
+        Why we are different
+      </h2>
+      <div class="mx-auto mt-6 h-1 w-14 rounded bg-accent"></div>
+    </div>
+
+    <div class="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-4">
+      {
+        values.map((v, i) => (
+          <div
+            class="reveal group bg-white p-9 transition-colors duration-300 hover:bg-dark"
+            data-delay={i}
+          >
+            <span class="font-heading text-4xl font-800 text-accent">{v.n}</span>
+            <h3 class="mt-4 font-heading text-xl font-700 text-foreground transition-colors duration-300 group-hover:text-white">
+              {v.title}
+            </h3>
+            <p class="mt-3 text-sm leading-relaxed text-muted-foreground transition-colors duration-300 group-hover:text-white/70">
+              {v.text}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

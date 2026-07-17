@@ -1,0 +1,70 @@
+---
+---
+
+<section id="consultation" class="relative overflow-hidden">
+  <!-- Parallax fixed background -->
+  <div
+    class="parallax absolute inset-0 z-0 bg-cover bg-center"
+    style="background-image: url('/images/consultation.png');"
+  >
+  </div>
+  <div class="absolute inset-0 z-0 bg-dark/80"></div>
+
+  <div class="relative z-10 mx-auto max-w-7xl px-6 py-24">
+    <div class="grid items-center gap-12 lg:grid-cols-2">
+      <div class="reveal">
+        <p class="mb-3 font-heading text-sm font-700 uppercase tracking-[0.3em] text-accent">
+          Free First Consultation
+        </p>
+        <h2 class="font-heading text-3xl font-800 text-white text-balance sm:text-4xl">
+          Let's talk about where your business goes next
+        </h2>
+        <p class="mt-6 max-w-lg leading-relaxed text-white/80">
+          Book a complimentary 45-minute strategy session with one of our
+          senior consultants. No obligations, just clear, honest guidance
+          tailored to your goals.
+        </p>
+        <ul class="mt-8 space-y-3">
+          {
+            [
+              "A tailored review of your current position",
+              "Actionable recommendations you can use immediately",
+              "A clear picture of how we could work together",
+            ].map((item) => (
+              <li class="flex items-center gap-3 text-white/90">
+                <span class="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-accent">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                </span>
+                <span class="text-sm">{item}</span>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <!-- Form card -->
+      <div class="reveal" data-delay="1">
+        <form
+          class="rounded-lg bg-white p-8 shadow-2xl"
+          onsubmit="event.preventDefault(); this.reset(); document.getElementById('form-success').classList.remove('hidden');"
+        >
+          <h3 class="mb-6 font-heading text-xl font-700 text-foreground">
+            Request your free consultation
+          </h3>
+          <div class="space-y-4">
+            <input required type="text" placeholder="Full name" class="w-full rounded-sm border border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+            <input required type="email" placeholder="Email address" class="w-full rounded-sm border border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+            <input type="tel" placeholder="Phone (optional)" class="w-full rounded-sm border border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+            <textarea rows="4" placeholder="Tell us briefly about your goals" class="w-full resize-none rounded-sm border border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent"></textarea>
+          </div>
+          <button type="submit" class="mt-6 w-full rounded-sm bg-accent py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover">
+            Book My Session
+          </button>
+          <p id="form-success" class="mt-4 hidden text-center text-sm font-600 text-accent">
+            Thanks! We'll be in touch within one business day.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

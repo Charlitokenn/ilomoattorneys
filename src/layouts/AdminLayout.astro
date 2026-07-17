@@ -1,0 +1,50 @@
+---
+import "../styles/global.css"
+
+interface Props {
+  title?: string
+  showChrome?: boolean
+}
+const { title = "Admin", showChrome = true } = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="bg-muted">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title} · Seven Business</title>
+  </head>
+  <body class="min-h-screen bg-muted text-foreground">
+    {showChrome && (
+      <header class="border-b border-border bg-background">
+        <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <a href="/admin" class="flex items-center gap-2" aria-label="Admin dashboard">
+            <span class="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-heading text-base font-extrabold text-white">7</span>
+            <span class="font-heading text-base font-800 text-foreground">Blog Admin</span>
+          </a>
+          <div class="flex items-center gap-4">
+            <a href="/blog" target="_blank" class="hidden text-sm font-500 text-muted-foreground transition-colors hover:text-accent sm:inline">
+              View blog ↗
+            </a>
+            <form method="POST" action="/api/logout">
+              <button type="submit" class="rounded-md border border-border px-3 py-1.5 text-sm font-600 text-foreground transition-colors hover:border-accent hover:text-accent">
+                Sign out
+              </button>
+            </form>
+          </div>
+        </div>
+      </header>
+    )}
+
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,133 @@
+---
+import "../styles/global.css"
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = "Seven Business — Strategy, Consulting & Growth",
+  description = "Seven Business is a full-service consulting company helping ambitious organizations grow through strategy, innovation and disciplined execution.",
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="en" class="bg-background">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content={description} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+
+    <script is:inline>
+      // ---- Reveal-on-scroll ----
+      const initReveal = () => {
+        const els = document.querySelectorAll(".reveal")
+        if (!("IntersectionObserver" in window)) {
+          els.forEach((e) => e.classList.add("is-visible"))
+          return
+        }
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add("is-visible")
+                io.unobserve(entry.target)
+              }
+            })
+          },
+          { threshold: 0.15, rootMargin: "0px 0px -60px 0px" }
+        )
+        els.forEach((el) => io.observe(el))
+      }
+
+      // ---- Sticky nav shrink + active section ----
+      const initNav = () => {
+        const nav = document.getElementById("site-nav")
+        const links = Array.from(document.querySelectorAll("[data-nav]"))
+        const sections = links
+          .map((l) => document.querySelector(l.getAttribute("href")))
+          .filter(Boolean)
+
+        const onScroll = () => {
+          if (nav) nav.classList.toggle("is-scrolled", window.scrollY > 60)
+
+          let current = ""
+          sections.forEach((sec) => {
+            const top = sec.getBoundingClientRect().top
+            if (top <= 140) current = "#" + sec.id
+          })
+          links.forEach((l) =>
+            l.classList.toggle("active", l.getAttribute("href") === current)
+          )
+        }
+        window.addEventListener("scroll", onScroll, { passive: true })
+        onScroll()
+      }
+
+      // ---- Lightweight parallax for elements with [data-parallax] ----
+      const initParallax = () => {
+        const items = Array.from(document.querySelectorAll("[data-parallax]"))
+        if (!items.length) return
+        let ticking = false
+        const update = () => {
+          const vh = window.innerHeight
+          items.forEach((el) => {
+            const rect = el.getBoundingClientRect()
+            if (rect.bottom < 0 || rect.top > vh) return
+            const speed = parseFloat(el.getAttribute("data-parallax")) || 0.2
+            const offset = (rect.top + rect.height / 2 - vh / 2) * speed
+            el.style.transform = "translate3d(0," + offset.toFixed(1) + "px,0)"
+          })
+          ticking = false
+        }
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!ticking) {
+              window.requestAnimationFrame(update)
+              ticking = true
+            }
+          },
+          { passive: true }
+        )
+        update()
+      }
+
+      // ---- Mobile menu toggle ----
+      const initMobileMenu = () => {
+        const btn = document.getElementById("menu-toggle")
+        const menu = document.getElementById("mobile-menu")
+        if (!btn || !menu) return
+        btn.addEventListener("click", () => {
+          const open = menu.classList.toggle("hidden") === false
+          btn.setAttribute("aria-expanded", String(open))
+        })
+        menu.querySelectorAll("a").forEach((a) =>
+          a.addEventListener("click", () => menu.classList.add("hidden"))
+        )
+      }
+
+      const boot = () => {
+        initReveal()
+        initNav()
+        initParallax()
+        initMobileMenu()
+      }
+      if (document.readyState !== "loading") boot()
+      else document.addEventListener("DOMContentLoaded", boot)
+    </script>
+  </body>
+</html>

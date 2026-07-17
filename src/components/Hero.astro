@@ -1,0 +1,70 @@
+---
+---
+
+<section id="home" class="relative flex min-h-screen items-center overflow-hidden">
+  <!-- Parallax background -->
+  <div class="absolute inset-0 z-0">
+    <div
+      data-parallax="0.18"
+      class="parallax absolute inset-0 scale-110 bg-cover bg-center"
+      style="background-image: url('/images/hero.png');"
+    >
+    </div>
+    <div class="absolute inset-0 bg-dark/65"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/30 to-dark/40"></div>
+  </div>
+
+  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 pt-28 pb-20">
+    <div class="max-w-3xl">
+      <p
+        class="hero-line mb-5 font-heading text-sm font-600 uppercase tracking-[0.35em] text-accent"
+        style="animation-delay: 0.15s;"
+      >
+        Welcome to Seven Business
+      </p>
+      <h1
+        class="hero-line font-heading text-4xl font-800 leading-[1.08] text-white text-balance sm:text-5xl lg:text-6xl"
+        style="animation-delay: 0.35s;"
+      >
+        We build strategies that move ambitious companies forward.
+      </h1>
+      <p
+        class="hero-line mt-6 max-w-xl text-lg leading-relaxed text-white/85"
+        style="animation-delay: 0.6s;"
+      >
+        A full-service consulting company combining sharp strategy, creative
+        thinking and disciplined execution to help your business grow with
+        confidence.
+      </p>
+      <div
+        class="hero-line mt-9 flex flex-wrap items-center gap-4"
+        style="animation-delay: 0.85s;"
+      >
+        <a
+          href="#consultation"
+          class="inline-flex items-center gap-2 rounded-sm bg-accent px-8 py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-all duration-300 hover:bg-accent-hover hover:-translate-y-0.5"
+        >
+          Free Consultation
+        </a>
+        <a
+          href="#services"
+          class="inline-flex items-center gap-2 rounded-sm border border-white/40 px-8 py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-all duration-300 hover:border-white hover:bg-white hover:text-dark"
+        >
+          Our Services
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <a
+    href="#services"
+    class="absolute bottom-8 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 text-white/70 transition-colors hover:text-white md:flex"
+    aria-label="Scroll to services"
+  >
+    <span class="font-heading text-[11px] uppercase tracking-[0.3em]">Scroll</span>
+    <span class="flex h-9 w-5 items-start justify-center rounded-full border border-white/50 p-1">
+      <span class="h-2 w-1 animate-bounce rounded-full bg-white/80"></span>
+    </span>
+  </a>
+</section>

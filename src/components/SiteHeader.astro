@@ -1,0 +1,80 @@
+---
+// Solid header for interior pages (blog, article). Links back to homepage sections.
+const links = [
+  { label: "Home", href: "/#home" },
+  { label: "Services", href: "/#services" },
+  { label: "Company", href: "/#company" },
+  { label: "Our Team", href: "/#team" },
+  { label: "Contact", href: "/#contact" },
+  { label: "Blog", href: "/blog" },
+]
+
+const { current = "/blog" } = Astro.props
+---
+
+<header class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
+    <a href="/" class="flex items-center gap-2" aria-label="Seven Business home">
+      <span class="flex h-9 w-9 items-center justify-center rounded-md bg-accent font-heading text-lg font-extrabold text-white">7</span>
+      <span class="font-heading text-xl font-extrabold tracking-tight text-foreground">
+        Seven<span class="text-accent">Business</span>
+      </span>
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex" aria-label="Primary">
+      {
+        links.map((l) => (
+          <a
+            href={l.href}
+            class:list={[
+              "nav-link font-heading text-[13px] font-600 uppercase tracking-wide transition-colors",
+              current === l.href ? "text-accent active" : "text-foreground hover:text-accent",
+            ]}
+          >
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <button
+      id="menu-toggle"
+      class="inline-flex flex-col gap-1.5 p-2 text-foreground lg:hidden"
+      aria-label="Toggle menu"
+      aria-controls="mobile-menu"
+      aria-expanded="false"
+    >
+      <span class="block h-0.5 w-6 bg-current"></span>
+      <span class="block h-0.5 w-6 bg-current"></span>
+      <span class="block h-0.5 w-6 bg-current"></span>
+    </button>
+  </div>
+
+  <nav id="mobile-menu" class="hidden border-t border-border bg-background lg:hidden" aria-label="Mobile">
+    <ul class="flex flex-col px-6 py-4">
+      {
+        links.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              class="block border-b border-border py-3 font-heading text-sm font-600 uppercase tracking-wide text-foreground transition-colors hover:text-accent"
+            >
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<script is:inline>
+  const btn = document.getElementById("menu-toggle")
+  const menu = document.getElementById("mobile-menu")
+  if (btn && menu) {
+    btn.addEventListener("click", () => {
+      const open = menu.classList.toggle("hidden") === false
+      btn.setAttribute("aria-expanded", String(open))
+    })
+  }
+</script>

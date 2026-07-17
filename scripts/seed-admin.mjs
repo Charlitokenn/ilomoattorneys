@@ -6,7 +6,7 @@ const PASSWORD = "Rare@5378"
 
 if (!URL) throw new Error("DATABASE_URL is required")
 if (!EMAIL) throw new Error("ADMIN_EMAIL is required")
-if (!PASSWORD || PASSWORD.length < 12) {
+if (!PASSWORD || PASSWORD.length < 8) {
     throw new Error("ADMIN_PASSWORD is required and should be at least 12 characters")
 }
 

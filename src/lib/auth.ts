@@ -5,18 +5,13 @@ const COOKIE_NAME = "admin_session"
 
 function getPassword(): string {
   return (
-    process.env.ADMIN_PASSWORD ||
-    (import.meta as any).env?.ADMIN_PASSWORD ||
-    ""
+    (import.meta as any).env?.ADMIN_PASSWORD
   )
 }
 
 function getSecret(): string {
   return (
-    process.env.SESSION_SECRET ||
-    (import.meta as any).env?.SESSION_SECRET ||
-    getPassword() ||
-    "insecure-dev-secret"
+    (import.meta as any).env?.SESSION_SECRET || "insecure-dev-secret"
   )
 }
 

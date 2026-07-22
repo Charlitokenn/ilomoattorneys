@@ -1,6 +1,6 @@
 import { neon } from "@neondatabase/serverless"
 
-const connectionString =  (import.meta as any).env?.NEON_DATABASE_URL
+const connectionString =  (import.meta as any).env?.DATABASE_URL
 
 if (!connectionString) {
   console.error("DATABASE_URL is not set")

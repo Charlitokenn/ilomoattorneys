@@ -1,11 +1,12 @@
 ---
+import {appConfig} from "../constants";
 const links = [
   { label: "Home", href: "#home" },
-  { label: "Services", href: "#services" },
-  { label: "Company", href: "#company" },
-  { label: "Our Benefits", href: "#benefits" },
-  { label: "Free Consultation", href: "#consultation" },
-  { label: "Our Team", href: "#team" },
+  { label: "Our Services", href: "#services" },
+  // { label: "Company", href: "#company" },
+  // { label: "Our Benefits", href: "#benefits" },
+  { label: "Consult Us", href: "#consultation" },
+  { label: "Our Attorneys", href: "#team" },
   { label: "Contact", href: "#contact" },
 ]
 
@@ -21,7 +22,7 @@ const pageLinks = [{ label: "Blog", href: "/blog" }]
     <a href="#home" class="flex items-center gap-2" aria-label="Seven Business home">
       <span class="flex h-9 w-9 items-center justify-center rounded-md bg-accent font-heading text-lg font-extrabold text-white">7</span>
       <span class="nav-logo font-heading text-xl font-extrabold tracking-tight text-white transition-colors">
-        Seven<span class="text-accent">Business</span>
+        {appConfig.name.slice(0, 4)}<span class="text-accent">{appConfig.name.slice(0, 4)}</span>
       </span>
     </a>
 

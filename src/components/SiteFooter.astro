@@ -1,4 +1,5 @@
 ---
+import {appConfig} from "../constants";
 const year = new Date().getFullYear()
 ---
 
@@ -16,6 +17,6 @@ const year = new Date().getFullYear()
       <a href="/blog" class="transition-colors hover:text-white">Blog</a>
       <a href="/#contact" class="transition-colors hover:text-white">Contact</a>
     </nav>
-    <p class="text-xs">&copy; {year} Seven Business. All rights reserved.</p>
+    <p class="text-xs">&copy; {year} {appConfig.name}. All rights reserved.</p>
   </div>
 </footer>

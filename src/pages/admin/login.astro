@@ -2,27 +2,33 @@
 import AdminLayout from "../../layouts/AdminLayout.astro"
 import { getSessionUser, verifyCredentials, createSession } from "../../lib/auth"
 
-
-// Already signed in? Go to dashboard.
-if (await getSessionUser(Astro.cookies)) {
-  return Astro.redirect("/admin")
-}
-
 let error = ""
 
-if (Astro.request.method === "POST") {
-  const form = await Astro.request.formData()
-  const email = String(form.get("email") || "").trim()
-  const password = String(form.get("password") || "")
-  const user = await verifyCredentials(email, password)
-
-  if (user) {
-    await createSession(Astro.cookies, user.id)
+// Already signed in? Go to dashboard.
+try {
+  if (await getSessionUser(Astro.cookies)) {
     return Astro.redirect("/admin")
-  } else {
-    error = "Incorrect password. Please try again."
   }
-  error = "Incorrect email or password. Please try again."
+} catch (err){
+  console.error("[login] session check failed:", err)
+}
+
+if (Astro.request.method === "POST") {
+  try {
+    const form = await Astro.request.formData()
+    const email = String(form.get("email") || "").trim()
+    const password = String(form.get("password") || "")
+
+    const user = await verifyCredentials(email, password)
+    if (user) {
+      await createSession(Astro.cookies, user.id)
+      return Astro.redirect("/admin")
+    }
+    error = "Incorrect email or password. Please try again."
+  } catch (err) {
+    console.error("[login] sign-in failed:", err)
+    error = "We couldn't sign you in right now. Please try again in a moment."
+  }
 }
 ---
 
@@ -56,7 +62,6 @@ if (Astro.request.method === "POST") {
                 id="email"
                 name="email"
                 required
-                autofocus
                 autocomplete="username"
                 class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
             />

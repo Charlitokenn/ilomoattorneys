@@ -1,5 +1,5 @@
 ---
----
+import {appConfig} from "../constants";---
 
 <section id="home" class="relative flex min-h-screen items-center overflow-hidden">
   <!-- Parallax background -->
@@ -7,7 +7,7 @@
     <div
       data-parallax="0.18"
       class="parallax absolute inset-0 scale-110 bg-cover bg-center"
-      style="background-image: url('/images/hero.png');"
+      style="background-image: url('/images/lawyer-docs.png');"
     >
     </div>
     <div class="absolute inset-0 bg-dark/65"></div>
@@ -20,21 +20,19 @@
         class="hero-line mb-5 font-heading text-sm font-600 uppercase tracking-[0.35em] text-accent"
         style="animation-delay: 0.15s;"
       >
-        Welcome to Seven Business
+        Welcome to {appConfig.name}
       </p>
       <h1
         class="hero-line font-heading text-4xl font-800 leading-[1.08] text-white text-balance sm:text-5xl lg:text-6xl"
         style="animation-delay: 0.35s;"
       >
-        We build strategies that move ambitious companies forward.
+        {appConfig.name}
       </h1>
       <p
         class="hero-line mt-6 max-w-xl text-lg leading-relaxed text-white/85"
         style="animation-delay: 0.6s;"
       >
-        A full-service consulting company combining sharp strategy, creative
-        thinking and disciplined execution to help your business grow with
-        confidence.
+        {appConfig.description}
       </p>
       <div
         class="hero-line mt-9 flex flex-wrap items-center gap-4"

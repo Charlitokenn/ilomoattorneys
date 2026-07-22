@@ -10,7 +10,13 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const isProtectedApi = pathname.startsWith("/api/articles")
 
   if (isAdminPage || isProtectedApi) {
-    const user = await getSessionUser(context.cookies)
+    let user = null
+
+    try {
+      user = await getSessionUser(context.cookies)
+    } catch (err) {
+      console.error("[middleware] session check failed:", err)
+    }
 
     if (!user) {
       if (isProtectedApi) {

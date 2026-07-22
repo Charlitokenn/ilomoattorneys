@@ -1,4 +1,5 @@
 ---
+import {appConfig} from "../constants";
 const year = new Date().getFullYear()
 ---
 
@@ -9,7 +10,7 @@ const year = new Date().getFullYear()
       <span class="font-heading text-lg font-800 text-white">Seven<span class="text-accent">Business</span></span>
     </a>
     <p class="text-sm text-white/50">
-      &copy; {year} Seven Business. Crafted with Astro & Tailwind CSS.
+      &copy; {year} {appConfig.name}.
     </p>
     <a
       href="#home"

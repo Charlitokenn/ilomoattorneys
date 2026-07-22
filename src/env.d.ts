@@ -8,3 +8,10 @@ declare namespace App {
         }
     }
 }
+
+interface ImportMetaEnv {
+    readonly DATABASE_URL: string;
+    readonly JWT_SECRET: string;
+    readonly ADMIN_EMAIL: string;
+    readonly ADMIN_PASSWORD: string;
+}

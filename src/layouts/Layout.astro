@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css"
+import {appConfig} from "../constants";
 
 interface Props {
   title?: string
@@ -7,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = "Ilomo Attorneys",
-  description = "Seven Business is a full-service consulting company helping ambitious organizations grow through strategy, innovation and disciplined execution.",
+  title = appConfig.name,
+  description = appConfig.description,
 } = Astro.props
 ---
 

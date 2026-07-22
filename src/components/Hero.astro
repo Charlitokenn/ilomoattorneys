@@ -1,5 +1,5 @@
 ---
----
+import {appConfig} from "../constants";---
 
 <section id="home" class="relative flex min-h-screen items-center overflow-hidden">
   <!-- Parallax background -->
@@ -20,19 +20,19 @@
         class="hero-line mb-5 font-heading text-sm font-600 uppercase tracking-[0.35em] text-accent"
         style="animation-delay: 0.15s;"
       >
-        Welcome to Ilomo Attorneys
+        Welcome to {appConfig.name}
       </p>
       <h1
         class="hero-line font-heading text-4xl font-800 leading-[1.08] text-white text-balance sm:text-5xl lg:text-6xl"
         style="animation-delay: 0.35s;"
       >
-        Ilomo Attorneys
+        {appConfig.name}
       </h1>
       <p
         class="hero-line mt-6 max-w-xl text-lg leading-relaxed text-white/85"
         style="animation-delay: 0.6s;"
       >
-        Leading the way in legal solutions and client success.
+        {appConfig.description}
       </p>
       <div
         class="hero-line mt-9 flex flex-wrap items-center gap-4"

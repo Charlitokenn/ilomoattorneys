@@ -5,6 +5,9 @@ export const appConfig = {
     mobile: "+255 676 107 653",
     email: "iloattorneys@gmail.com",
     cta: "Your Premier Legal Team, Give us a Call",
+    companyStats: {
+       yearsInExpertise: "12+",
+    },
     images : {
         logo: "https://ilomoattorneys.com/og-image.jpg",
         team: {

@@ -7,7 +7,7 @@ const year = new Date().getFullYear()
   <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
     <a href="#home" class="flex items-center gap-2">
       <span class="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-heading text-sm font-extrabold text-white">7</span>
-      <span class="font-heading text-lg font-800 text-white">Seven<span class="text-accent">Business</span></span>
+      <span class="font-heading text-lg font-800 text-white">{appConfig.name.slice(0,5)}<span class="text-accent">{appConfig.name.slice(5,15)}</span></span>
     </a>
     <p class="text-sm text-white/50">
       &copy; {year} {appConfig.name}.

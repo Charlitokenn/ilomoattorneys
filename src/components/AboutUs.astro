@@ -1,36 +1,37 @@
 ---
+import {appConfig} from "../constants";
 const stats = [
   { value: "12+", label: "Years in business" },
-  { value: "480", label: "Projects delivered" },
-  { value: "96%", label: "Client retention" },
-  { value: "40", label: "Team members" },
+  { value: "480", label: "Projects Delivered" },
+  { value: "96%", label: "Client Retention" },
+  { value: "40", label: "Team Members" },
 ]
 ---
 
-<section id="company" class="bg-muted py-24">
+<section id="about-us" class="bg-muted py-24">
   <div class="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-2">
     <!-- Image -->
     <div class="reveal relative">
-      <div class="overflow-hidden rounded-lg shadow-xl">
+      <div class="overflow-hidden rounded-2xl shadow-xl">
         <img
-          src="/images/about.png"
+          src="/images/lawyer-with-client.png"
           alt="Two Seven Business consultants reviewing performance charts together"
           class="h-full w-full object-cover"
           loading="lazy"
         />
       </div>
-      <div class="absolute -bottom-6 -right-6 hidden rounded-lg bg-accent px-8 py-6 text-white shadow-lg sm:block">
-        <p class="font-heading text-3xl font-800 leading-none">12+</p>
-        <p class="mt-1 text-xs uppercase tracking-widest text-white/80">Years of expertise</p>
+      <div class="absolute -bottom-6 -right-6 hidden rounded-2xl bg-accent px-8 py-6 text-white shadow-lg sm:block">
+        <p class="font-heading text-3xl font-800 leading-none">{appConfig.companyStats.yearsInExpertise}</p>
+        <p class="mt-1 text-xs uppercase font-semibold tracking-widest text-white/80">Years of expertise</p>
       </div>
     </div>
 
     <!-- Text -->
     <div class="reveal" data-delay="1">
-      <p class="mb-3 font-heading text-sm font-700 uppercase tracking-[0.3em] text-accent">
+      <p class="mb-3 font-heading text-sm font-bold uppercase tracking-[0.3em] text-accent">
         Who We Are
       </p>
-      <h2 class="font-heading text-3xl font-800 text-foreground text-balance sm:text-4xl">
+      <h2 class="font-heading text-3xl font-semibold text-foreground text-balance sm:text-4xl">
         A partner invested in your long-term success
       </h2>
       <div class="mt-6 h-1 w-14 rounded bg-accent"></div>
@@ -50,8 +51,8 @@ const stats = [
         {
           stats.map((s) => (
             <div>
-              <p class="font-heading text-3xl font-800 text-foreground">{s.value}</p>
-              <p class="mt-1 text-xs uppercase tracking-wide text-muted-foreground">{s.label}</p>
+              <p class="font-heading text-3xl font-semibold text-foreground">{s.value}</p>
+              <p class="mt-1 text-xs propercase tracking-wide text-muted-foreground">{s.label}</p>
             </div>
           ))
         }

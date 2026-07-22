@@ -1,18 +1,18 @@
 ---
 import {appConfig} from "../constants";
 const team = [
-  { name: "Happy Ilomo", role: "Advocate", img: "/images/team/happy-ilomo.jpg" },
-  { name: "Joyce Basanda", role: "Advocate", img: "/images/team/joyce-basanda.jpg" },
+  { name: "Happy Ilomo", role: "Advocate", img: "/team/happy-ilomo.jpg" },
+  { name: "Joyce Basanda", role: "Advocate", img: "/team/joyce-basanda.jpg" },
 ]
 ---
 
 <section id="team" class="bg-muted py-24">
   <div class="mx-auto max-w-7xl px-6">
     <div class="reveal mx-auto mb-16 max-w-2xl text-center">
-      <p class="mb-3 font-heading text-sm font-700 uppercase tracking-[0.3em] text-accent">
+      <p class="mb-3 font-heading text-sm font-bold uppercase tracking-[0.3em] text-accent">
         Highly Qualified Team
       </p>
-      <h2 class="font-heading text-3xl font-800 text-foreground text-balance sm:text-4xl">
+      <h2 class="font-heading text-3xl font-semibold text-foreground text-balance sm:text-4xl">
         Meet the people behind {appConfig.name}
       </h2>
       <div class="mx-auto mt-6 h-1 w-14 rounded bg-accent"></div>
@@ -22,24 +22,24 @@ const team = [
       {
         team.map((m, i) => (
           <article class="reveal group text-center" data-delay={i}>
-            <div class="relative mx-auto overflow-hidden rounded-lg">
+            <div class="relative mx-auto overflow-hidden rounded-2xl">
               <img
                 src={m.img}
                 alt={`Portrait of ${m.name}, ${m.role}`}
-                class="aspect-square w-full object-cover grayscale transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
+                class="aspect-square w-full object-cover transition-all duration-500 group-hover:scale-105 group-hover:grayscale-0"
                 loading="lazy"
               />
-              <div class="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-dark/80 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <div class="flex gap-3 pb-5">
-                  {["in", "tw", "be"].map((s) => (
-                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-[11px] font-700 uppercase text-white backdrop-blur transition-colors hover:bg-accent">
-                      {s}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              <!--<div class="absolute inset-0 flex items-end justify-center bg-gradient-to-t from-dark/80 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100">-->
+              <!--  <div class="flex gap-3 pb-5">-->
+              <!--    {["in", "tw", "be"].map((s) => (-->
+              <!--      <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-[11px] font-700 uppercase text-white backdrop-blur transition-colors hover:bg-accent">-->
+              <!--        {s}-->
+              <!--      </span>-->
+              <!--    ))}-->
+              <!--  </div>-->
+              <!--</div>-->
             </div>
-            <h3 class="mt-5 font-heading text-lg font-700 text-foreground">{m.name}</h3>
+            <h3 class="mt-5 font-heading text-lg font-semibold text-foreground">{m.name}</h3>
             <p class="mt-1 text-sm text-accent">{m.role}</p>
           </article>
         ))

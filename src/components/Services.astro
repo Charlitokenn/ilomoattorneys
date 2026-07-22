@@ -78,13 +78,13 @@ const services = [
 ]
 ---
 
-<section id="services" class="bg-white py-24">
+<section id="services" class="bg-white/50 py-24">
   <div class="mx-auto max-w-7xl px-6">
     <div class="reveal mx-auto mb-16 max-w-2xl text-center">
-      <p class="mb-3 font-heading text-sm font-700 uppercase tracking-[0.3em] text-accent">
+      <p class="mb-3 font-heading text-sm font-bold uppercase tracking-[0.3em] text-accent">
         What We Do
       </p>
-      <h2 class="font-heading text-3xl font-800 text-foreground text-balance sm:text-4xl">
+      <h2 class="font-heading text-3xl font-semibold text-foreground text-balance sm:text-4xl">
         Services built to grow your business
       </h2>
       <div class="mx-auto mt-6 h-1 w-14 rounded bg-accent"></div>
@@ -94,7 +94,7 @@ const services = [
       {
         services.map((s, i) => (
           <article
-            class="reveal group rounded-lg border border-border bg-white p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-accent/40 hover:shadow-xl"
+            class="reveal group rounded-2xl border-2 border-border bg-white p-8 text-center transition-all duration-300 hover:-translate-y-2 hover:border-accent/40 hover:shadow-xl"
             data-delay={i}
           >
             <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-muted text-accent transition-colors duration-300 group-hover:bg-accent group-hover:text-white">
@@ -127,7 +127,7 @@ const services = [
                 )}
               </svg>
             </div>
-            <h3 class="mb-3 font-heading text-lg font-700 text-foreground">{s.title}</h3>
+            <h3 class="mb-3 font-heading text-lg font-semibold text-foreground">{s.title}</h3>
             <p class="text-sm leading-relaxed text-muted-foreground">{s.text}</p>
           </article>
         ))

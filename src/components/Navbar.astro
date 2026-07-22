@@ -3,8 +3,8 @@ import {appConfig} from "../constants";
 const links = [
   { label: "Home", href: "#home" },
   { label: "Our Services", href: "#services" },
-  // { label: "Company", href: "#company" },
-  // { label: "Our Benefits", href: "#benefits" },
+  { label: "About Us", href: "#about-us" },
+  { label: "Our Benefits", href: "#benefits" },
   { label: "Consult Us", href: "#consultation" },
   { label: "Our Attorneys", href: "#team" },
   { label: "Contact", href: "#contact" },
@@ -33,7 +33,7 @@ const pageLinks = [{ label: "Blog", href: "/blog" }]
           <a
             href={l.href}
             data-nav
-            class="nav-link nav-item font-heading text-[13px] font-600 uppercase tracking-wide text-white/90 transition-colors hover:text-white"
+            class="nav-link nav-item font-heading text-[14px] font-600 propercase font-semibold tracking-wide text-white/90 transition-colors hover:text-white hover:font-bold"
           >
             {l.label}
           </a>
@@ -43,7 +43,7 @@ const pageLinks = [{ label: "Blog", href: "/blog" }]
         pageLinks.map((l) => (
           <a
             href={l.href}
-            class="nav-link nav-item font-heading text-[13px] font-600 uppercase tracking-wide text-white/90 transition-colors hover:text-white"
+            class="nav-link nav-item font-heading text-[14px] font-600 propercase font-semibold tracking-wide text-white/90 transition-colors hover:text-white hover:font-bold"
           >
             {l.label}
           </a>

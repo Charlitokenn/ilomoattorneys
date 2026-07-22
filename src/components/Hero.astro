@@ -1,5 +1,6 @@
 ---
-import {appConfig} from "../constants";---
+import {appConfig} from "../constants";
+---
 
 <section id="home" class="relative flex min-h-screen items-center overflow-hidden">
   <!-- Parallax background -->
@@ -14,7 +15,7 @@ import {appConfig} from "../constants";---
     <div class="absolute inset-0 bg-gradient-to-t from-dark/80 via-dark/30 to-dark/40"></div>
   </div>
 
-  <div class="relative z-10 mx-auto w-full max-w-7xl px-6 pt-28 pb-20">
+  <div class="flex justify-between items-center relative z-10 mx-auto w-full max-w-7xl px-6 pt-28 pb-20">
     <div class="max-w-3xl">
       <p
         class="hero-line mb-5 font-heading text-sm font-bold uppercase tracking-[0.35em] text-accent"
@@ -52,6 +53,14 @@ import {appConfig} from "../constants";---
         </a>
       </div>
     </div>
+    <a
+        class="cursor-pointer reveal flex flex-col border-3 rounded-2xl p-4 gap-2 text-muted"
+        href={`tel:${appConfig.mobile.replaceAll(" ","")}`}
+    >
+      <span class="text-lg font-semibold">Your Premier Legal Team</span>
+      <span class="text-3xl font-bold">{appConfig.mobile}</span>
+      <span class="text-lg font-semibold">Give Us a Call</span>
+    </a>
   </div>
 
   <!-- Scroll cue -->

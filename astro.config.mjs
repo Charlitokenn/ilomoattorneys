@@ -8,7 +8,7 @@ export default defineConfig({
   adapter: cloudflare({
     // You don't use <Image> transforms, so skip provisioning the
     // Cloudflare Images binding entirely.
-    imageService: "passthrough", prerenderEnvironment: "node"
+    imageService: "passthrough",
   }),
   vite: {
     plugins: [tailwindcss()],

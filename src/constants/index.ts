@@ -15,9 +15,8 @@ export const appConfig = {
             partnerTwo: "/team/joyce-basanda.jpg",
         }
     },
-    links: {
-        whatsapp: "wa.link",
-        facebook: "https://www.facebook.com/profile.php?id=100095239643915",
-        instagram: "https://www.instagram.com/ilomo_attoneys",
-    },
+    socials: [
+        { label: "Facebook", icon: "/apple-icon.png", url: "https://www.facebook.com/profile.php?id=100095239643915" },
+        { label: "Instagram", icon: "/apple-icon.png", url: "https://www.instagram.com/ilomo_attoneys" },
+    ],
 }

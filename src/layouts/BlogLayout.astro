@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css"
+import {appConfig} from "../constants"
 
 interface Props {
   title: string
@@ -59,7 +60,7 @@ const resolvedOg = ogImage
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
     <meta property="og:image" content={resolvedOg} />
-    <meta property="og:site_name" content="Seven Business" />
+    <meta property="og:site_name" content={appConfig.name} />
     {ogType === "article" && publishedTime && (
       <meta property="article:published_time" content={publishedTime} />
     )}

@@ -4,6 +4,7 @@ import SiteHeader from "../../components/SiteHeader.astro"
 import SiteFooter from "../../components/SiteFooter.astro"
 import { getArticleBySlug, getRelatedArticles } from "../../lib/db"
 import { sanitizeArticleHtml, formatDate } from "../../lib/utils"
+import { appConfig } from "../../constants"
 
 const { slug } = Astro.params
 const article = slug ? await getArticleBySlug(slug) : null
@@ -30,7 +31,7 @@ const jsonLd = {
   author: { "@type": "Person", name: article.author },
   publisher: {
     "@type": "Organization",
-    name: "Seven Business",
+    name: appConfig.name,
     logo: { "@type": "ImageObject", url: siteUrl + "/favicon.svg" },
   },
   mainEntityOfPage: { "@type": "WebPage", "@id": pageUrl },

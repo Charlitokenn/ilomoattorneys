@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css"
+import { appConfig } from "../constants"
 
 interface Props {
   title?: string
@@ -21,7 +22,7 @@ const { title = "Admin", showChrome = true } = Astro.props
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Open+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <title>{title} · Seven Business</title>
+    <title>{title} | {appConfig.name}</title>
   </head>
   <body class="min-h-screen bg-muted text-foreground">
     {showChrome && (
@@ -29,7 +30,7 @@ const { title = "Admin", showChrome = true } = Astro.props
         <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <a href="/admin" class="flex items-center gap-2" aria-label="Admin dashboard">
             <span class="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-heading text-base font-extrabold text-white">7</span>
-            <span class="font-heading text-base font-800 text-foreground">Blog Admin</span>
+            <span class="font-heading text-base font-800 text-foreground">Admin Dashboard</span>
           </a>
           <div class="flex items-center gap-4">
             <a href="/blog" target="_blank" class="hidden text-sm font-500 text-muted-foreground transition-colors hover:text-accent sm:inline">

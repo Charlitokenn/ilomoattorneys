@@ -13,10 +13,15 @@ export const appConfig = {
         team: {
             partnerOne: "/team/happy-ilomo.jpg",
             partnerTwo: "/team/joyce-basanda.jpg",
+            teamOne: "/team/team-1.jpg",
+            teamTwo: "/team/team-2.jpg",
+            teamThree: "/team/team-3.jpg",
+            teamFour: "/team/team-4.jpg",
         }
     },
     socials: [
-        { label: "Facebook", icon: "/apple-icon.png", url: "https://www.facebook.com/profile.php?id=100095239643915" },
-        { label: "Instagram", icon: "/apple-icon.png", url: "https://www.instagram.com/ilomo_attoneys" },
+        { label: "WhatsApp", icon: "/whatsapp-slim.svg", url: "https://wa.me/255676107653" },
+        { label: "Facebook", icon: "/facebook.svg", url: "https://www.facebook.com/profile.php?id=100095239643915" },
+        { label: "Instagram", icon: "/instagram.svg", url: "https://www.instagram.com/ilomo_attoneys" },
     ],
 }

@@ -1,10 +1,7 @@
 ---
-import {appConfig} from "../constants";
 const stats = [
-  { value: "12+", label: "Years in business" },
-  { value: "480", label: "Projects Delivered" },
-  { value: "96%", label: "Client Retention" },
-  { value: "40", label: "Team Members" },
+  { value: "50+", label: "Clients served" },
+  { value: "100+", label: "Cases Won" },
 ]
 ---
 
@@ -21,8 +18,8 @@ const stats = [
         />
       </div>
       <div class="absolute -bottom-6 -right-6 hidden rounded-2xl bg-accent px-8 py-6 text-white shadow-lg sm:block">
-        <p class="font-heading text-3xl font-800 leading-none">{appConfig.companyStats.yearsInExpertise}</p>
-        <p class="mt-1 text-xs uppercase font-semibold tracking-widest text-white/80">Years of expertise</p>
+        <p class="font-heading text-3xl font-800 leading-none">{stats[0].value}</p>
+        <p class="mt-1 text-xs uppercase font-semibold tracking-widest text-white/80">{stats[0].label}</p>
       </div>
     </div>
 
@@ -32,19 +29,18 @@ const stats = [
         Who We Are
       </p>
       <h2 class="font-heading text-3xl font-semibold text-foreground text-balance sm:text-4xl">
-        A partner invested in your long-term success
+        A partner invested in your success
       </h2>
       <div class="mt-6 h-1 w-14 rounded bg-accent"></div>
       <p class="mt-6 leading-relaxed text-muted-foreground">
-        Seven Business was founded on a simple belief: great strategy is only
-        valuable when it is executed brilliantly. For over a decade we have
-        helped startups and enterprises alike navigate change, sharpen their
-        focus and unlock sustainable growth.
+        At Ilomo Attorneys, we take great pride in our strong client relationships, which are deeply rooted in
+        the provision of exceptional legal services. We are based in Njombe Town within Tanzania, committed to
+        providing legal services to individuals, businesses and organizations.
       </p>
       <p class="mt-4 leading-relaxed text-muted-foreground">
-        Our multidisciplinary team blends analytical rigour with creative
-        problem-solving, working alongside you as a genuine extension of your
-        own organisation.
+        With our team of experienced lawyers, we offers a full range of legal services to meet your diverse needs. Whether
+        you require assistance with litigation, family related legal matters or real estate matters, we have the
+        expertise to provide effective legal solutions.
       </p>
 
       <div class="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">

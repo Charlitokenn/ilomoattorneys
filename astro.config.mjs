@@ -11,7 +11,7 @@ export default defineConfig({
     // Cloudflare Images binding entirely.
     imageService: "passthrough",
     //TODO - Remove this as it's for dev only
-    // prerenderEnvironment: "node",
+    prerenderEnvironment: "node",
   }),
   integrations: [
     clerk({

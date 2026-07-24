@@ -1,44 +1,23 @@
-import { defineMiddleware } from "astro:middleware"
-import { getSessionUser } from "./lib/auth"
+import type { MiddlewareHandler } from "astro"
+import { sequence } from "astro:middleware"
+import { clerkMiddleware } from "@clerk/astro/server"
 
-export const onRequest = defineMiddleware(async (context, next) => {
-  const { pathname } = context.url
+// Populates Astro.locals.auth() on every request. Clerk's Astro SDK
+// deliberately dropped path-based route matching here (createRouteMatcher)
+// in favor of checking auth in each protected page/route directly — see
+// src/pages/admin/*.astro and src/pages/admin/login.astro.
+const clerk = clerkMiddleware()
 
-  const isAdminPage =
-      (pathname === "/admin" || pathname.startsWith("/admin/")) &&
-      pathname !== "/admin/login"
-  const isProtectedApi = pathname.startsWith("/api/articles")
-
-  if (isAdminPage || isProtectedApi) {
-    let user = null
-
-    try {
-      user = await getSessionUser(context.cookies)
-    } catch (err) {
-      console.error("[middleware] session check failed:", err)
-    }
-
-    if (!user) {
-      if (isProtectedApi) {
-        return new Response(JSON.stringify({ error: "Unauthorized" }), {
-          status: 401,
-          headers: { "Content-Type": "application/json" },
-        })
-      }
-      return context.redirect("/admin/login")
-    }
-
-    context.locals.user = user
-  }
-
+// Never let a CDN, proxy, or the browser cache an authenticated admin
+// response — a cached 200 served to the next visitor would bypass the
+// auth check in the page entirely.
+const noStoreForAdmin: MiddlewareHandler = async (context, next) => {
   const response = await next()
-
-  // Never let a CDN, proxy, or the browser cache an authenticated admin
-  // response — a cached 200 served to the next visitor would bypass the
-  // auth check above entirely.
-  if (isAdminPage || isProtectedApi || pathname === "/admin/login") {
+  const { pathname } = context.url
+  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
     response.headers.set("Cache-Control", "no-store, private")
   }
-
   return response
-})
+}
+
+export const onRequest = sequence(clerk, noStoreForAdmin)

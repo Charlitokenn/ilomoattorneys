@@ -13,7 +13,7 @@ if (!article || article.status !== "published") {
   return new Response(null, { status: 404, statusText: "Not Found" })
 }
 
-const related = await getRelatedArticles(article.category, article.id)
+const related = await getRelatedArticles(article.category, article.id, 5)
 const safeContent = sanitizeArticleHtml(article.content)
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, "") || Astro.url.origin
@@ -77,54 +77,64 @@ const jsonLd = {
     </header>
 
     <!-- Body -->
-    <article class="mx-auto max-w-3xl px-6 py-14">
-      <p class="mb-10 text-balance text-lg font-500 leading-relaxed text-foreground">
-        {article.excerpt}
-      </p>
-      <div class="article-body" set:html={safeContent} />
+    <div class="mx-auto max-w-6xl px-6 py-14">
+      <div class="lg:grid lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start lg:gap-12">
+        <article class="max-w-2xl">
+          <p class="mb-10 text-balance text-lg font-500 leading-relaxed text-foreground">
+            {article.excerpt}
+          </p>
+          <div class="article-body" set:html={safeContent} />
 
-      <!-- Share / keywords -->
-      {article.meta_keywords && (
-        <div class="mt-12 flex flex-wrap gap-2 border-t border-border pt-8">
-          {article.meta_keywords.split(",").map((k) => (
-            <span class="rounded-full bg-muted px-3 py-1 text-xs font-500 text-muted-foreground">
-              {k.trim()}
-            </span>
-          ))}
-        </div>
-      )}
+          <!-- Share / keywords -->
+          {article.meta_keywords && (
+            <div class="mt-12 flex flex-wrap gap-2 border-t border-border pt-8">
+              {article.meta_keywords.split(",").map((k) => (
+                <span class="rounded-full bg-muted px-3 py-1 text-xs font-500 text-muted-foreground">
+                  {k.trim()}
+                </span>
+              ))}
+            </div>
+          )}
 
-      <div class="mt-10">
-        <a href="/blog" class="inline-flex items-center gap-2 font-heading text-sm font-700 uppercase tracking-wide text-accent transition-colors hover:text-accent-hover">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
-          Back to Blog
-        </a>
-      </div>
-    </article>
-
-    <!-- Related -->
-    {related.length > 0 && (
-      <section class="border-t border-border bg-muted py-16">
-        <div class="mx-auto max-w-7xl px-6">
-          <h2 class="mb-10 text-center font-heading text-2xl font-800 text-foreground">Related Articles</h2>
-          <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {
-              related.map((a) => (
-                <a href={`/blog/${a.slug}`} class="group flex flex-col overflow-hidden rounded-xl border border-border bg-background shadow-sm transition-shadow hover:shadow-xl">
-                  <div class="relative aspect-[16/10] overflow-hidden">
-                    <img src={a.cover_image || "/images/hero.png"} alt={a.title} class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-                  </div>
-                  <div class="flex flex-1 flex-col p-6">
-                    <p class="font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">{formatDate(a.published_at)}</p>
-                    <h3 class="mt-2 text-balance font-heading text-lg font-700 leading-snug text-foreground transition-colors group-hover:text-accent">{a.title}</h3>
-                  </div>
-                </a>
-              ))
-            }
+          <div class="mt-10">
+            <a href="/blog" class="inline-flex items-center gap-2 font-heading text-sm font-700 uppercase tracking-wide text-accent transition-colors hover:text-accent-hover">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+              Back to Blog
+            </a>
           </div>
-        </div>
-      </section>
-    )}
+        </article>
+
+        <!-- Related -->
+        {related.length > 0 && (
+          <aside class="mt-14 lg:mt-0" aria-labelledby="related-articles-heading">
+            <div class="lg:sticky lg:top-8">
+              <h2 id="related-articles-heading" class="mb-5 font-heading text-xs font-700 uppercase tracking-wide text-muted-foreground">
+                Related Articles
+              </h2>
+              <div class="space-y-4">
+                {
+                  related.map((a) => (
+                    <a href={`/blog/${a.slug}`} class="group flex gap-3 rounded-xl border border-border bg-background p-3 transition-shadow hover:shadow-lg">
+                      <div class="relative h-16 w-20 flex-shrink-0 overflow-hidden rounded-lg">
+                        <img src={a.cover_image || "/images/hero.png"} alt="" class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
+                      </div>
+                      <div class="min-w-0">
+                        <h3 class="text-balance font-heading text-sm font-700 leading-snug text-foreground transition-colors group-hover:text-accent line-clamp-2">
+                          {a.title}
+                        </h3>
+                        <p class="mt-1 text-xs leading-relaxed text-muted-foreground line-clamp-2">
+                          {a.excerpt}
+                        </p>
+                      </div>
+                    </a>
+                  ))
+                }
+              </div>
+            </div>
+          </aside>
+        )}
+      </div>
+    </div>
   </main>
 
   <SiteFooter />

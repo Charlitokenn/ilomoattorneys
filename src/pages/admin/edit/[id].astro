@@ -10,9 +10,8 @@ import {
 } from "../../../lib/db"
 import { slugify, estimateReadingMinutes, excerptFromHtml } from "../../../lib/utils"
 
-if (!Astro.locals.user) {
-  return Astro.redirect("/admin/login")
-}
+const { userId, redirectToSignIn } = Astro.locals.auth()
+if (!userId) return redirectToSignIn()
 
 const id = Number(Astro.params.id)
 if (!Number.isInteger(id)) {

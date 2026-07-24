@@ -1,34 +1,11 @@
 ---
 import AdminLayout from "../../layouts/AdminLayout.astro"
-import { getSessionUser, verifyCredentials, createSession } from "../../lib/auth"
-
-let error = ""
+import { SignIn } from "@clerk/astro/components"
 
 // Already signed in? Go to dashboard.
-try {
-  if (await getSessionUser(Astro.cookies)) {
-    return Astro.redirect("/admin")
-  }
-} catch (err){
-  console.error("[login] session check failed:", err)
-}
-
-if (Astro.request.method === "POST") {
-  try {
-    const form = await Astro.request.formData()
-    const email = String(form.get("email") || "").trim()
-    const password = String(form.get("password") || "")
-
-    const user = await verifyCredentials(email, password)
-    if (user) {
-      await createSession(Astro.cookies, user.id)
-      return Astro.redirect("/admin")
-    }
-    error = "Incorrect email or password. Please try again."
-  } catch (err) {
-    console.error("[login] sign-in failed:", err)
-    error = "We couldn't sign you in right now. Please try again in a moment."
-  }
+const { userId } = Astro.locals.auth()
+if (userId) {
+  return Astro.redirect("/admin")
 }
 ---
 
@@ -42,51 +19,20 @@ if (Astro.request.method === "POST") {
         </a>
       </div>
 
-      <div class="rounded-xl border border-border bg-background p-8 shadow-sm">
-        <h1 class="font-heading text-lg font-800 text-foreground">Sign in</h1>
-        <p class="mt-1 text-sm text-muted-foreground">Enter your password to manage blog posts.</p>
-
-        {error && (
-          <p class="mt-5 rounded-md border border-accent/30 bg-accent/10 px-3 py-2.5 text-sm text-accent">
-            {error}
-          </p>
-        )}
-
-        <form method="POST" class="mt-6 space-y-4">
-          <div>
-            <label for="email" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
-              Email
-            </label>
-            <input
-                type="email"
-                id="email"
-                name="email"
-                required
-                autocomplete="username"
-                class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
-            />
-          </div>
-          <div>
-            <label for="password" class="mb-1.5 block font-heading text-xs font-600 uppercase tracking-wide text-muted-foreground">
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              autocomplete="current-password"
-              class="w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none transition-colors focus:border-accent"
-            />
-          </div>
-          <button
-            type="submit"
-            class="w-full rounded-md bg-accent px-4 py-2.5 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover"
-          >
-            Sign in
-          </button>
-        </form>
-      </div>
+      <SignIn
+        forceRedirectUrl="/admin"
+        appearance={{
+          elements: {
+            rootBox: "w-full",
+            card: "rounded-xl border border-border bg-background p-8 shadow-sm w-full",
+            headerTitle: "font-heading text-lg font-800 text-foreground",
+            headerSubtitle: "text-sm text-muted-foreground",
+            formButtonPrimary:
+              "rounded-md bg-accent px-4 py-2.5 font-heading text-sm font-700 uppercase tracking-wide text-white hover:bg-accent-hover",
+            footerAction: "hidden",
+          },
+        }}
+      />
 
       <p class="mt-6 text-center text-xs text-muted-foreground">
         <a href="/" class="transition-colors hover:text-accent">← Back to website</a>

@@ -4,9 +4,8 @@ import EditorForm from "../../components/EditorForm.astro"
 import { createArticle, slugExists, getPublishedCategories, type ArticleInput } from "../../lib/db"
 import { slugify, estimateReadingMinutes, excerptFromHtml } from "../../lib/utils"
 
-if (!Astro.locals.user) {
-  return Astro.redirect("/admin/login")
-}
+const { userId, redirectToSignIn } = Astro.locals.auth()
+if (!userId) return redirectToSignIn()
 
 let error = ""
 const categories = await getPublishedCategories()

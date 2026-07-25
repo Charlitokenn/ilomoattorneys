@@ -38,26 +38,74 @@
       <!-- Form card -->
       <div class="reveal" data-delay="1">
         <form
+          id="consultation-form"
           class="rounded-2xl bg-white p-8 shadow-2xl"
-          onsubmit="event.preventDefault(); this.reset(); document.getElementById('form-success').classList.remove('hidden');"
         >
           <h3 class="mb-6 font-heading text-xl font-700 text-foreground">
             Request your free consultation
           </h3>
           <div class="space-y-4">
-            <input required type="text" placeholder="Full name" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent " />
-            <input required type="email" placeholder="Email address" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
-            <input type="tel" placeholder="Phone (optional)" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
-            <textarea rows="4" placeholder="Tell us briefly your needs" class="w-full resize-none rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent"></textarea>
+            <!-- Honeypot: left blank by real visitors, hidden via CSS -->
+            <input type="text" name="company_website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
+            <input required name="name" type="text" placeholder="Full name" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent " />
+            <input required name="email" type="email" placeholder="Email address" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+            <input name="phone" type="tel" placeholder="Phone (optional)" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+            <textarea name="message" rows="4" placeholder="Tell us briefly your needs" class="w-full resize-none rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent"></textarea>
           </div>
-          <button type="submit" class="mt-6 w-full rounded-lg bg-accent py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover cursor-pointer">
+          <button id="consultation-submit" type="submit" class="mt-6 w-full rounded-lg bg-accent py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover cursor-pointer disabled:cursor-not-allowed disabled:opacity-70">
             Book My Session
           </button>
           <p id="form-success" class="mt-4 hidden text-center text-sm font-600 text-accent">
             Thanks! We'll be in touch within one business day.
           </p>
+          <p id="form-error" class="mt-4 hidden text-center text-sm font-600 text-red-600">
+            Something went wrong. Please try again.
+          </p>
         </form>
       </div>
     </div>
   </div>
+
+  <script>
+    const form = document.getElementById("consultation-form")
+    const successEl = document.getElementById("form-success")
+    const errorEl = document.getElementById("form-error")
+    const submitBtn = document.getElementById("consultation-submit")
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault()
+      successEl?.classList.add("hidden")
+      errorEl?.classList.add("hidden")
+
+      if (submitBtn instanceof HTMLButtonElement) {
+        submitBtn.disabled = true
+        submitBtn.textContent = "Sending..."
+      }
+
+      try {
+        const response = await fetch("/api/consultation", {
+          method: "POST",
+          body: new FormData(form as HTMLFormElement),
+        })
+        const data = await response.json().catch(() => ({}))
+
+        if (!response.ok || !data.success) {
+          throw new Error(data?.error || "Something went wrong. Please try again.")
+        }
+
+        ;(form as HTMLFormElement).reset()
+        successEl?.classList.remove("hidden")
+      } catch (err) {
+        if (errorEl) {
+          errorEl.textContent = err instanceof Error ? err.message : "Something went wrong. Please try again."
+          errorEl.classList.remove("hidden")
+        }
+      } finally {
+        if (submitBtn instanceof HTMLButtonElement) {
+          submitBtn.disabled = false
+          submitBtn.textContent = "Book My Session"
+        }
+      }
+    })
+  </script>
 </section>

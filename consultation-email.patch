@@ -1,0 +1,214 @@
+diff --git a/src/components/Consultation.astro b/src/components/Consultation.astro
+index fb1648c..35d76aa 100644
+--- a/src/components/Consultation.astro
++++ b/src/components/Consultation.astro
+@@ -38,26 +38,74 @@
+       <!-- Form card -->
+       <div class="reveal" data-delay="1">
+         <form
++          id="consultation-form"
+           class="rounded-2xl bg-white p-8 shadow-2xl"
+-          onsubmit="event.preventDefault(); this.reset(); document.getElementById('form-success').classList.remove('hidden');"
+         >
+           <h3 class="mb-6 font-heading text-xl font-700 text-foreground">
+             Request your free consultation
+           </h3>
+           <div class="space-y-4">
+-            <input required type="text" placeholder="Full name" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent " />
+-            <input required type="email" placeholder="Email address" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+-            <input type="tel" placeholder="Phone (optional)" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
+-            <textarea rows="4" placeholder="Tell us briefly your needs" class="w-full resize-none rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent"></textarea>
++            <!-- Honeypot: left blank by real visitors, hidden via CSS -->
++            <input type="text" name="company_website" tabindex="-1" autocomplete="off" class="hidden" aria-hidden="true" />
++            <input required name="name" type="text" placeholder="Full name" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent " />
++            <input required name="email" type="email" placeholder="Email address" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
++            <input name="phone" type="tel" placeholder="Phone (optional)" class="w-full rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent" />
++            <textarea name="message" rows="4" placeholder="Tell us briefly your needs" class="w-full resize-none rounded-xl border-2 border-border bg-muted px-4 py-3 text-sm text-foreground outline-none transition-colors focus:border-accent"></textarea>
+           </div>
+-          <button type="submit" class="mt-6 w-full rounded-lg bg-accent py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover cursor-pointer">
++          <button id="consultation-submit" type="submit" class="mt-6 w-full rounded-lg bg-accent py-4 font-heading text-sm font-700 uppercase tracking-wide text-white transition-colors hover:bg-accent-hover cursor-pointer disabled:cursor-not-allowed disabled:opacity-70">
+             Book My Session
+           </button>
+           <p id="form-success" class="mt-4 hidden text-center text-sm font-600 text-accent">
+             Thanks! We'll be in touch within one business day.
+           </p>
++          <p id="form-error" class="mt-4 hidden text-center text-sm font-600 text-red-600">
++            Something went wrong. Please try again.
++          </p>
+         </form>
+       </div>
+     </div>
+   </div>
++
++  <script>
++    const form = document.getElementById("consultation-form")
++    const successEl = document.getElementById("form-success")
++    const errorEl = document.getElementById("form-error")
++    const submitBtn = document.getElementById("consultation-submit")
++
++    form?.addEventListener("submit", async (event) => {
++      event.preventDefault()
++      successEl?.classList.add("hidden")
++      errorEl?.classList.add("hidden")
++
++      if (submitBtn instanceof HTMLButtonElement) {
++        submitBtn.disabled = true
++        submitBtn.textContent = "Sending..."
++      }
++
++      try {
++        const response = await fetch("/api/consultation", {
++          method: "POST",
++          body: new FormData(form as HTMLFormElement),
++        })
++        const data = await response.json().catch(() => ({}))
++
++        if (!response.ok || !data.success) {
++          throw new Error(data?.error || "Something went wrong. Please try again.")
++        }
++
++        ;(form as HTMLFormElement).reset()
++        successEl?.classList.remove("hidden")
++      } catch (err) {
++        if (errorEl) {
++          errorEl.textContent = err instanceof Error ? err.message : "Something went wrong. Please try again."
++          errorEl.classList.remove("hidden")
++        }
++      } finally {
++        if (submitBtn instanceof HTMLButtonElement) {
++          submitBtn.disabled = false
++          submitBtn.textContent = "Book My Session"
++        }
++      }
++    })
++  </script>
+ </section>
+diff --git a/src/env.d.ts b/src/env.d.ts
+index c0cdc70..1b45acf 100644
+--- a/src/env.d.ts
++++ b/src/env.d.ts
+@@ -4,4 +4,5 @@ interface ImportMetaEnv {
+     readonly DATABASE_URL: string;
+     readonly PUBLIC_CLERK_PUBLISHABLE_KEY: string;
+     readonly CLERK_SECRET_KEY: string;
++    readonly RESEND_API_KEY: string;
+ }
+\ No newline at end of file
+diff --git a/src/pages/api/consultation.ts b/src/pages/api/consultation.ts
+new file mode 100644
+index 0000000..1730b13
+--- /dev/null
++++ b/src/pages/api/consultation.ts
+@@ -0,0 +1,112 @@
++import type { APIRoute } from "astro"
++
++const TO_EMAIL = "nkonoki.charles@gmail.com"
++// Must be an address on a domain you've verified in Resend — you cannot
++// send "from" a Gmail address. See notes in the chat reply for setup.
++const FROM_EMAIL = "Ilomo Attorneys Website <consultations@ilomoattorneys.com>"
++
++const escapeHtml = (value: string) =>
++  value.replace(/[&<>"']/g, (char) =>
++    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char] as string
++  )
++
++const isValidEmail = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
++
++export const POST: APIRoute = async ({ request }) => {
++  let form: FormData
++  try {
++    form = await request.formData()
++  } catch {
++    return new Response(JSON.stringify({ error: "Invalid form submission." }), {
++      status: 400,
++      headers: { "Content-Type": "application/json" },
++    })
++  }
++
++  const name = String(form.get("name") || "").trim()
++  const email = String(form.get("email") || "").trim()
++  const phone = String(form.get("phone") || "").trim()
++  const message = String(form.get("message") || "").trim()
++  // Honeypot: real visitors never see or fill this field (hidden in CSS).
++  // Bots that auto-fill every input will trip it.
++  const honeypot = String(form.get("company_website") || "").trim()
++
++  if (honeypot) {
++    // Pretend success so the bot doesn't learn to avoid this field.
++    return new Response(JSON.stringify({ success: true }), {
++      status: 200,
++      headers: { "Content-Type": "application/json" },
++    })
++  }
++
++  if (!name || !email) {
++    return new Response(JSON.stringify({ error: "Name and email are required." }), {
++      status: 400,
++      headers: { "Content-Type": "application/json" },
++    })
++  }
++
++  if (!isValidEmail(email)) {
++    return new Response(JSON.stringify({ error: "Please enter a valid email address." }), {
++      status: 400,
++      headers: { "Content-Type": "application/json" },
++    })
++  }
++
++  // Matches the import.meta.env pattern already used in lib/db.ts for
++  // DATABASE_URL, so it picks up .dev.vars locally and the Cloudflare
++  // Worker secret in production the same way.
++  const RESEND_API_KEY = import.meta.env.RESEND_API_KEY
++  if (!RESEND_API_KEY) {
++    console.error("RESEND_API_KEY is not configured.")
++    return new Response(JSON.stringify({ error: "Something went wrong. Please try again shortly." }), {
++      status: 500,
++      headers: { "Content-Type": "application/json" },
++    })
++  }
++
++  const html = `
++    <h2 style="font-family:sans-serif;">New consultation request</h2>
++    <p style="font-family:sans-serif;"><strong>Name:</strong> ${escapeHtml(name)}</p>
++    <p style="font-family:sans-serif;"><strong>Email:</strong> ${escapeHtml(email)}</p>
++    <p style="font-family:sans-serif;"><strong>Phone:</strong> ${escapeHtml(phone) || "—"}</p>
++    <p style="font-family:sans-serif;"><strong>Goals:</strong><br>${escapeHtml(message).replace(/\n/g, "<br>") || "—"}</p>
++  `.trim()
++
++  try {
++    const resendResponse = await fetch("https://api.resend.com/emails", {
++      method: "POST",
++      headers: {
++        Authorization: `Bearer ${RESEND_API_KEY}`,
++        "Content-Type": "application/json",
++      },
++      body: JSON.stringify({
++        from: FROM_EMAIL,
++        to: [TO_EMAIL],
++        reply_to: email,
++        subject: `New consultation request from ${name}`,
++        html,
++      }),
++    })
++
++    if (!resendResponse.ok) {
++      const errorBody = await resendResponse.text()
++      console.error("Resend API error:", resendResponse.status, errorBody)
++      return new Response(JSON.stringify({ error: "Something went wrong. Please try again shortly." }), {
++        status: 502,
++        headers: { "Content-Type": "application/json" },
++      })
++    }
++  } catch (err) {
++    console.error("Failed to reach Resend:", err)
++    return new Response(JSON.stringify({ error: "Something went wrong. Please try again shortly." }), {
++      status: 502,
++      headers: { "Content-Type": "application/json" },
++    })
++  }
++
++  return new Response(JSON.stringify({ success: true }), {
++    status: 200,
++    headers: { "Content-Type": "application/json" },
++  })
++}

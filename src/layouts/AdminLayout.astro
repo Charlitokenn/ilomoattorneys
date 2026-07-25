@@ -30,7 +30,6 @@ const { title = "Admin", showChrome = true } = Astro.props
       <header class="border-b border-border bg-background">
         <div class="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <div class="flex items-center gap-2">
-            <span class="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-heading text-base font-extrabold text-white" aria-hidden="true">7</span>
             <OrganizationSwitcher
               hidePersonal={true}
               afterSelectOrganizationUrl="/admin"
@@ -38,6 +37,7 @@ const { title = "Admin", showChrome = true } = Astro.props
                 elements: {
                   rootBox: "flex items-center",
                   organizationSwitcherTrigger: "font-heading text-base font-800 text-foreground px-2 py-1 rounded-md hover:bg-muted",
+                  organizationSwitcherPopoverActionButton__createOrganization: "hidden",
                 },
               }}
             />

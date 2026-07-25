@@ -1,11 +1,15 @@
 ---
 // Solid header for interior pages (blog, article). Links back to homepage sections.
+
+import {appConfig} from "../constants";
 const links = [
-  { label: "Home", href: "/#home" },
-  { label: "Services", href: "/#services" },
-  { label: "About Us", href: "/#about-us" },
-  { label: "Our Team", href: "/#team" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Home", href: "#home" },
+  { label: "Our Services", href: "#services" },
+  { label: "About Us", href: "#about-us" },
+  { label: "Our Ideology", href: "#benefits" },
+  { label: "Consult Us", href: "#consultation" },
+  { label: "Our Attorneys", href: "#team" },
+  { label: "Contact", href: "#contact" },
   { label: "Blog", href: "/blog" },
 ]
 
@@ -14,10 +18,10 @@ const { current = "/blog" } = Astro.props
 
 <header class="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur">
   <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-    <a href="/" class="flex items-center gap-2" aria-label="Seven Business home">
-      <span class="flex h-9 w-9 items-center justify-center rounded-md bg-accent font-heading text-lg font-extrabold text-white">7</span>
-      <span class="font-heading text-xl font-extrabold tracking-tight text-foreground">
-        Seven<span class="text-accent">Business</span>
+    <a href="#home" class="flex items-center gap-2" aria-label="Ilomo Attorneys home">
+      <img src="/favicon.png"/>
+      <span class="nav-logo font-heading text-xl font-extrabold tracking-tight text-white transition-colors">
+        {appConfig.name.slice(0, 5)}<span class="text-accent">{appConfig.name.slice(5, 15)}</span>
       </span>
     </a>
 

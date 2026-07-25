@@ -5,10 +5,11 @@ const year = new Date().getFullYear()
 
 <footer class="border-t border-border bg-dark py-12 text-white/70">
   <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
-    <a href="/" class="flex items-center gap-2" aria-label="Seven Business home">
-      <span class="flex h-8 w-8 items-center justify-center rounded-md bg-accent font-heading text-base font-extrabold text-white">7</span>
-      <span class="font-heading text-lg font-extrabold text-white">
-        {appConfig.name.slice(0,5)}<span class="text-accent">{appConfig.name.slice(5,15)}</span>
+
+    <a href="#home" class="flex items-center gap-2" aria-label="Ilomo Attorneys home">
+      <img src="/favicon.png"/>
+      <span class="nav-logo font-heading text-xl font-extrabold tracking-tight text-white transition-colors">
+        {appConfig.name.slice(0, 5)}<span class="text-accent">{appConfig.name.slice(5, 15)}</span>
       </span>
     </a>
     <nav class="flex flex-wrap items-center gap-6 text-sm" aria-label="Footer">

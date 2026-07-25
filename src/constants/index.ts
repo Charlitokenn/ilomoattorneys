@@ -23,5 +23,6 @@ export const appConfig = {
         { label: "WhatsApp", icon: "/whatsapp-slim.svg", url: "https://wa.me/255676107653" },
         { label: "Facebook", icon: "/facebook.svg", url: "https://www.facebook.com/profile.php?id=100095239643915" },
         { label: "Instagram", icon: "/instagram.svg", url: "https://www.instagram.com/ilomo_attoneys" },
+        {label: "Admin", icon: "", url: "/admin"},
     ],
 }
